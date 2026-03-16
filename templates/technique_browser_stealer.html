@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T004: Browser Stealer | TESTERPy2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <style>
+        :root { --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1c1c1c; --border: #2a2a2a; --white: #ffffff; --white-70: rgba(255,255,255,0.7); --white-50: rgba(255,255,255,0.5); --white-30: rgba(255,255,255,0.3); --white-10: rgba(255,255,255,0.1); --success: #4ade80; --warning: #fbbf24; --error: #f87171; --info: #60a5fa; --purple: #a78bfa; --rail-width: 72px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--white); min-height: 100vh; line-height: 1.6; }
+        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
+        .rail-logo { width: 44px; height: 44px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--bg-dark); margin-bottom: 24px; text-decoration: none; }
+        .rail-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .rail-section { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
+        .rail-item { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #ef4444; text-decoration: none; transition: all 0.2s ease; position: relative; }
+        .rail-item:hover { background: var(--white-10); }
+        .rail-item.active { background: var(--white); color: var(--bg-dark); }
+        .rail-item::after { content: attr(data-tooltip); position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: var(--bg-dark); border: 1px solid var(--border); color: var(--white); padding: 8px 12px; border-radius: 8px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.15s ease; z-index: 1000; }
+        .rail-item:hover::after { opacity: 1; visibility: visible; }
+        .rail-footer { margin-top: auto; }
+        .rail-mitre { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,0.05); color: #ef4444; text-decoration: none; transition: all 0.2s ease; }
+        .rail-mitre:hover { background: var(--white-10); }
+        .main-wrapper { margin-left: var(--rail-width); min-height: 100vh; }
+        .header { background: var(--bg-dark); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 72px; display: flex; align-items: center; }
+        .header-inner { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { padding: 8px 12px; background: var(--white-10); border: 1px solid var(--border); border-radius: 6px; color: var(--white-70); text-decoration: none; font-size: 12px; font-family: 'IBM Plex Mono', monospace; }
+        .nav-link:hover, .nav-link.active { background: var(--white); color: var(--bg-dark); }
+        .main { max-width: 1000px; margin: 0 auto; padding: 48px 32px; }
+        .technique-badge { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .badge { font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 6px 12px; border-radius: 6px; }
+        .badge-id { background: var(--white); color: var(--bg-dark); font-weight: 600; }
+        .badge-mitre { background: var(--error); color: var(--white); }
+        .badge-platform { background: var(--info); color: var(--bg-dark); font-size: 11px; }
+        .badge-platform.linux { background: var(--success); }
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 16px; }
+        .subtitle { font-size: 16px; color: var(--white-70); margin-bottom: 32px; }
+        .section { margin-bottom: 40px; }
+        h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        p { color: var(--white-70); margin-bottom: 16px; font-size: 15px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+        .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: var(--purple); margin-bottom: 12px; }
+        ul { list-style: none; }
+        li { padding: 12px 0; padding-left: 24px; position: relative; color: var(--white-70); font-size: 14px; border-bottom: 1px solid var(--border); }
+        li:last-child { border-bottom: none; }
+        li::before { content: '→'; position: absolute; left: 0; color: var(--white-30); }
+        li strong { color: var(--white); }
+        .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e6edf3; overflow-x: auto; margin: 16px 0; line-height: 1.5; white-space: pre; tab-size: 4; }
+        .code-block code { font-family: inherit; color: inherit; }
+        .hljs { background: transparent !important; }
+        .hljs-keyword { color: #ff7b72; }
+        .hljs-string { color: #a5d6ff; }
+        .hljs-comment { color: #8b949e; font-style: italic; }
+        .hljs-function .hljs-title { color: #d2a8ff; }
+        .hljs-number { color: #79c0ff; }
+        .hljs-built_in { color: #ffa657; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .browser-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+        .browser-card .icon { font-size: 48px; margin-bottom: 16px; }
+        .browser-card h3 { font-size: 16px; margin-bottom: 8px; }
+        .browser-card p { font-size: 12px; margin: 0; }
+        .detect-item { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .detect-item h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--warning); }
+        .detect-item p { font-size: 13px; margin: 0; }
+        .ref-link { display: block; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--white-70); text-decoration: none; font-size: 13px; margin-bottom: 8px; }
+        .ref-link:hover { background: var(--bg-card); color: var(--white); }
+        .footer { border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; margin-top: 48px; }
+        .footer p { font-size: 13px; color: var(--white-50); font-family: 'IBM Plex Mono', monospace; }
+        @media (max-width: 768px) { .rail { display: none; } .main-wrapper { margin-left: 0; } .grid-2, .grid-3 { grid-template-columns: 1fr; } .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
+                <a href="/about" class="rail-item" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
+            </div>
+        </div>
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <div class="header-title">T004: Browser Stealer</div>
+                <nav class="nav-links">
+                    <a href="/technique/shellcode_loader" class="nav-link">T001</a>
+                    <a href="/technique/defense_evasion" class="nav-link">T002</a>
+                    <a href="/technique/credential_dumper" class="nav-link">T003</a>
+                    <a href="/technique/browser_stealer" class="nav-link active">T004</a>
+                    <a href="/technique/discovery_collection" class="nav-link">T005</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="technique-badge">
+                <span class="badge badge-id">T004</span>
+                <span class="badge badge-mitre">T1059.006 + T1555.003</span>
+                <span class="badge badge-platform">Windows</span>
+                <span class="badge badge-platform linux">Linux</span>
+            </div>
+            <h1>Python Browser Stealer</h1>
+            <p class="subtitle">Tests EDR/AV detection of Python-based browser data theft targeting saved passwords, cookies, and session tokens — techniques used by CookieMiner, Lumma Stealer, and RedLine.</p>
+
+            <section class="section">
+                <h2>🌐 Target Browsers</h2>
+                <div class="grid-3">
+                    <div class="browser-card"><div class="icon">🔵</div><h3>Google Chrome</h3><p>SQLite databases with DPAPI encryption</p></div>
+                    <div class="browser-card"><div class="icon">🦊</div><h3>Mozilla Firefox</h3><p>JSON + SQLite with NSS encryption</p></div>
+                    <div class="browser-card"><div class="icon">🔷</div><h3>Microsoft Edge</h3><p>Chromium-based, DPAPI encryption</p></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💻 Technical Implementation</h2>
+                <div class="card">
+                    <div class="card-title">t004_browser_stealer.py</div>
+                    <pre class="code-block"><code class="language-python">{{ test_code }}</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔍 Detection Opportunities</h2>
+                <div class="grid-2">
+                    <div class="detect-item"><h4>Browser Profile Access</h4><p>Non-browser process accessing Chrome/Firefox User Data directories</p></div>
+                    <div class="detect-item"><h4>SQLite on Browser DBs</h4><p>Python querying Login Data, Cookies, or History databases</p></div>
+                    <div class="detect-item"><h4>File Copy Operations</h4><p>Copying browser database files to temp directory</p></div>
+                    <div class="detect-item"><h4>DPAPI Decryption</h4><p>CryptUnprotectData calls from non-browser processes</p></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🛡️ MITRE ATT&CK Mapping</h2>
+                <div class="grid-2">
+                    <div class="card"><div class="card-title">T1555.003 - Credentials from Web Browsers</div><p>Adversaries acquire credentials from web browsers by reading browser-specific files.</p></div>
+                    <div class="card"><div class="card-title">T1539 - Steal Web Session Cookie</div><p>Stolen session cookies enable account takeover without needing passwords.</p></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💥 Real-World Usage</h2>
+                <div class="card">
+                    <ul>
+                        <li><strong>CookieMiner</strong> — macOS malware stealing browser cookies and credentials</li>
+                        <li><strong>Lumma Stealer</strong> — MaaS infostealer targeting browser data</li>
+                        <li><strong>RedLine Stealer</strong> — Widespread infostealer sold on underground forums</li>
+                        <li><strong>Raccoon Stealer</strong> — Infostealer-as-a-service targeting browser stores</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📚 References</h2>
+                <a href="https://attack.mitre.org/techniques/T1555/003/" target="_blank" class="ref-link">📖 MITRE ATT&CK - Credentials from Web Browsers</a>
+                <a href="https://unit42.paloaltonetworks.com/mac-malware-steals-cryptocurrency-exchanges-cookies/" target="_blank" class="ref-link">📄 Unit42 - CookieMiner Analysis</a>
+            </section>
+        </main>
+
+        <footer class="footer"><p>© 2025 TESTERPy2. All rights reserved. For authorized security testing only.</p></footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results | TESTERPy2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1c1c1c; --bg-hover: #242424;
+            --border: #2a2a2a; --border-light: #3a3a3a;
+            --white: #ffffff; --white-90: rgba(255,255,255,0.9); --white-70: rgba(255,255,255,0.7);
+            --white-50: rgba(255,255,255,0.5); --white-30: rgba(255,255,255,0.3); --white-10: rgba(255,255,255,0.1);
+            --success: #4ade80; --warning: #fbbf24; --error: #f87171; --info: #60a5fa; --purple: #a78bfa;
+            --rail-width: 72px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--white); min-height: 100vh; line-height: 1.5; }
+
+        /* Navigation Rail */
+        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
+        .rail-logo { width: 44px; height: 44px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--bg-dark); margin-bottom: 24px; text-decoration: none; }
+        .rail-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .rail-section { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
+        .rail-item { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #ef4444; text-decoration: none; font-size: 20px; transition: all 0.2s ease; position: relative; }
+        .rail-item:hover { background: var(--white-10); }
+        .rail-item.active { background: var(--white); color: var(--bg-dark); }
+        .rail-item::after { content: attr(data-tooltip); position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: var(--bg-dark); border: 1px solid var(--border); color: var(--white); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.15s ease; pointer-events: none; z-index: 1000; }
+        .rail-item:hover::after { opacity: 1; visibility: visible; }
+        .rail-footer { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .rail-mitre { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--white-05); color: #ef4444; text-decoration: none; font-size: 18px; transition: all 0.2s ease; }
+        .rail-mitre:hover { background: var(--white-10); }
+
+        .main-wrapper { margin-left: var(--rail-width); min-height: 100vh; }
+
+        .header { background: var(--bg-dark); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 72px; display: flex; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .header-inner { max-width: 1400px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: var(--white); color: var(--bg-dark); }
+        .btn-primary:hover { box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
+        .btn-secondary { background: var(--white-10); color: var(--white-70); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--white-10); color: var(--white); }
+
+        .main { max-width: 1400px; margin: 0 auto; padding: 32px; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-header p { color: var(--white-50); font-size: 14px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+        .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--white-50); margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-card.success .stat-value { color: var(--success); }
+        .stat-card.detected .stat-value { color: var(--warning); }
+        .stat-card.failed .stat-value { color: var(--error); }
+        .stat-card.pending .stat-value { color: var(--info); }
+        .stat-card.skipped .stat-value { color: var(--white-50); }
+
+        .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filter-btn { font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--white-70); cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { border-color: var(--border-light); color: var(--white); }
+        .filter-btn.active { background: var(--white); color: var(--bg-dark); border-color: var(--white); }
+        .filter-btn.success.active { background: var(--success); border-color: var(--success); }
+        .filter-btn.detected.active { background: var(--warning); border-color: var(--warning); }
+        .filter-btn.failed.active { background: var(--error); border-color: var(--error); color: var(--white); }
+        .filter-btn.pending.active { background: var(--info); border-color: var(--info); }
+
+        .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .panel-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .panel-title::before { content: ''; width: 8px; height: 8px; background: var(--white); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .refresh-info { font-size: 12px; color: var(--white-30); font-family: 'IBM Plex Mono', monospace; }
+
+        .results-table { width: 100%; border-collapse: collapse; }
+        .results-table th, .results-table td { text-align: left; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+        .results-table th { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--white-50); background: var(--bg-elevated); }
+        .results-table tr:hover td { background: var(--bg-elevated); }
+        .results-table tr:last-child td { border-bottom: none; }
+
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+        .status-badge.success { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+        .status-badge.detected { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+        .status-badge.failed { background: rgba(248, 113, 113, 0.15); color: var(--error); }
+        .status-badge.pending { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+        .status-badge.running { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
+        .status-badge.skipped { background: var(--white-10); color: var(--white-50); }
+
+        .test-name { font-weight: 600; font-size: 14px; }
+        .test-id { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white-50); margin-top: 4px; }
+        .agent-info { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--info); }
+        .time-info { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--white-50); }
+        .details-cell { font-size: 13px; color: var(--white-50); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .expand-btn { padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--white-70); cursor: pointer; font-family: 'Space Grotesk', sans-serif; }
+        .expand-btn:hover { background: var(--white-10); color: var(--white); }
+        .detail-row { display: none; }
+        .detail-row.visible { display: table-row; }
+        .detail-row td { background: var(--bg-dark); }
+        .detail-content { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--white-70); white-space: pre-wrap; padding: 16px; background: var(--bg-elevated); border-radius: 8px; max-height: 300px; overflow-y: auto; }
+
+        .empty-state { padding: 80px 40px; text-align: center; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .empty-state h3 { font-size: 18px; margin-bottom: 8px; }
+        .empty-state p { color: var(--white-50); font-size: 14px; }
+
+        .footer { border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; margin-top: 48px; }
+        .footer p { font-size: 13px; color: var(--white-50); font-family: 'IBM Plex Mono', monospace; }
+
+        @media (max-width: 1200px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .rail { display: none; } .main-wrapper { margin-left: 0; } .stats-row { grid-template-columns: repeat(2, 1fr); } .results-table { display: block; overflow-x: auto; } }
+    </style>
+</head>
+<body>
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item" data-tooltip="Dashboard">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </a>
+                <a href="/results" class="rail-item active" data-tooltip="Results">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </a>
+                <a href="/about" class="rail-item" data-tooltip="About">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <div class="header-title">Test Results</div>
+                <div class="header-actions">
+                    <a href="/agents" class="btn btn-secondary">View Agents</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="page-header">
+                <h1>Test Results</h1>
+                <p>View and analyze results from all executed security tests</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-label">Total Tests</div><div class="stat-value" id="stat-total">0</div></div>
+                <div class="stat-card success"><div class="stat-label">Bypassed</div><div class="stat-value" id="stat-success">0</div></div>
+                <div class="stat-card detected"><div class="stat-label">Detected</div><div class="stat-value" id="stat-detected">0</div></div>
+                <div class="stat-card failed"><div class="stat-label">Failed</div><div class="stat-value" id="stat-failed">0</div></div>
+                <div class="stat-card pending"><div class="stat-label">Pending</div><div class="stat-value" id="stat-pending">0</div></div>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Results</button>
+                <button class="filter-btn success" data-filter="success">Bypassed</button>
+                <button class="filter-btn detected" data-filter="detected">Detected</button>
+                <button class="filter-btn failed" data-filter="failed">Failed</button>
+                <button class="filter-btn pending" data-filter="pending">Pending</button>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Results History</div>
+                    <div class="refresh-info">Auto-refresh: 3s</div>
+                </div>
+                <div id="results-container">
+                    <div class="empty-state">
+                        <div class="icon">📊</div>
+                        <h3>No Test Results</h3>
+                        <p>Execute tests from the dashboard to see results here</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 TESTERPy2. All rights reserved. BreachSimRange.io</p>
+        </footer>
+    </div>
+
+    <script>
+        let results = [], agents = [], currentFilter = 'all';
+
+        async function fetchAgents() {
+            try { agents = await (await fetch('/api/agents')).json(); } catch (e) { console.error('Failed to fetch agents:', e); }
+        }
+
+        async function updateResults() {
+            try {
+                results = await (await fetch('/api/results')).json();
+                document.getElementById('stat-total').textContent = results.length;
+                document.getElementById('stat-success').textContent = results.filter(r => r.status === 'success').length;
+                document.getElementById('stat-detected').textContent = results.filter(r => r.status === 'detected').length;
+                document.getElementById('stat-failed').textContent = results.filter(r => r.status === 'failed').length;
+                document.getElementById('stat-pending').textContent = results.filter(r => r.status === 'pending' || r.status === 'running').length;
+                renderResults();
+            } catch (e) { console.error('Failed to fetch results:', e); }
+        }
+
+        function renderResults() {
+            const container = document.getElementById('results-container');
+            let filtered = currentFilter === 'all' ? results : currentFilter === 'pending' ? results.filter(r => r.status === 'pending' || r.status === 'running') : results.filter(r => r.status === currentFilter);
+            filtered.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">📊</div><h3>No ${currentFilter === 'all' ? '' : currentFilter + ' '}Results</h3><p>${currentFilter === 'all' ? 'Execute tests from the dashboard to see results here' : 'No tests with this status'}</p></div>`;
+                return;
+            }
+            container.innerHTML = `
+                <table class="results-table">
+                    <thead><tr><th>Status</th><th>Test</th><th>Agent</th><th>Time</th><th>Details</th><th></th></tr></thead>
+                    <tbody>${filtered.map((r, i) => {
+                        const agent = agents.find(a => a.agent_id === r.agent_id);
+                        return `<tr>
+                            <td><span class="status-badge ${r.status}">${r.status}</span></td>
+                            <td><div class="test-name">${r.test_name}</div><div class="test-id">${r.test_id}</div></td>
+                            <td><span class="agent-info">${agent ? agent.hostname : r.agent_id}</span></td>
+                            <td><span class="time-info">${new Date(r.start_time).toLocaleString()}</span></td>
+                            <td><div class="details-cell">${r.details || '-'}</div></td>
+                            <td>${r.details ? `<button class="expand-btn" onclick="toggleDetail(${i})">Expand</button>` : ''}</td>
+                        </tr>${r.details ? `<tr class="detail-row" id="detail-${i}"><td colspan="6"><div class="detail-content">${r.details}${r.detection_info ? '\n\nDetection Info: ' + r.detection_info : ''}</div></td></tr>` : ''}`;
+                    }).join('')}</tbody>
+                </table>`;
+        }
+
+        function toggleDetail(i) { const row = document.getElementById(`detail-${i}`); if (row) row.classList.toggle('visible'); }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderResults();
+            });
+        });
+
+        fetchAgents(); updateResults();
+        setInterval(updateResults, 3000); setInterval(fetchAgents, 10000);
+    </script>
+</body>
+</html>

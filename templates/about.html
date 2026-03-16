@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | TESTERPy2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #0d0d0d; --bg-card: #161616; --bg-elevated: #1c1c1c; --border: #2a2a2a; --border-light: #3a3a3a; --white: #ffffff; --white-70: rgba(255,255,255,0.7); --white-50: rgba(255,255,255,0.5); --white-30: rgba(255,255,255,0.3); --white-10: rgba(255,255,255,0.1); --success: #4ade80; --warning: #fbbf24; --error: #f87171; --info: #60a5fa; --purple: #a78bfa; --rail-width: 72px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--white); min-height: 100vh; line-height: 1.6; }
+        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
+        .rail-logo { width: 44px; height: 44px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--bg-dark); margin-bottom: 24px; text-decoration: none; }
+        .rail-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .rail-section { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
+        .rail-item { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #ef4444; text-decoration: none; transition: all 0.2s ease; position: relative; }
+        .rail-item:hover { background: var(--white-10); }
+        .rail-item.active { background: var(--white); color: var(--bg-dark); }
+        .rail-item::after { content: attr(data-tooltip); position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: var(--bg-dark); border: 1px solid var(--border); color: var(--white); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.15s ease; pointer-events: none; z-index: 1000; }
+        .rail-item:hover::after { opacity: 1; visibility: visible; }
+        .rail-footer { margin-top: auto; }
+        .rail-mitre { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--white-05); color: #ef4444; text-decoration: none; transition: all 0.2s ease; }
+        .rail-mitre:hover { background: var(--white-10); }
+        .main-wrapper { margin-left: var(--rail-width); min-height: 100vh; }
+        .header { background: var(--bg-dark); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 72px; display: flex; align-items: center; }
+        .header-inner { max-width: 900px; width: 100%; margin: 0 auto; }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .main { max-width: 900px; margin: 0 auto; padding: 48px 32px; }
+        .hero { text-align: center; margin-bottom: 64px; }
+        .hero-logo { width: 100px; height: 100px; background: var(--white); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 32px; color: var(--bg-dark); margin: 0 auto 24px; }
+        .hero h1 { font-size: 42px; font-weight: 700; margin-bottom: 16px; }
+        .hero p { font-size: 18px; color: var(--white-70); max-width: 600px; margin: 0 auto 24px; }
+        .hero-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .badge { font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 8px 16px; border-radius: 8px; background: var(--white-10); color: var(--white-70); border: 1px solid var(--border); }
+        .badge.mitre { background: var(--error); color: var(--white); border-color: var(--error); }
+        .badge.version { background: var(--success); color: var(--bg-dark); border-color: var(--success); }
+        .section { margin-bottom: 48px; }
+        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 16px; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .info-item { margin-bottom: 16px; }
+        .info-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--white-50); margin-bottom: 6px; }
+        .info-value { font-size: 16px; font-weight: 500; }
+        .info-value a { color: var(--info); text-decoration: none; }
+        .info-value a:hover { text-decoration: underline; }
+        .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .team-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+        .team-avatar { width: 64px; height: 64px; background: var(--white-10); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
+        .team-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .team-role { font-size: 13px; color: var(--white-50); }
+        .feature-list { display: flex; flex-direction: column; gap: 12px; }
+        .feature-item { display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: var(--bg-elevated); border-radius: 12px; border: 1px solid var(--border); }
+        .feature-icon { width: 40px; height: 40px; background: var(--error); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .feature-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .feature-content p { font-size: 13px; color: var(--white-50); }
+        .cta-card { background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 40px; text-align: center; }
+        .cta-card h3 { font-size: 24px; margin-bottom: 12px; }
+        .cta-card p { color: var(--white-70); margin-bottom: 24px; }
+        .btn { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; padding: 14px 28px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-primary { background: var(--white); color: var(--bg-dark); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
+        .footer { border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; margin-top: 48px; }
+        .footer p { font-size: 13px; color: var(--white-50); font-family: 'IBM Plex Mono', monospace; }
+        @media (max-width: 768px) { .rail { display: none; } .main-wrapper { margin-left: 0; } .card-grid, .team-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 32px; } }
+    </style>
+</head>
+<body>
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
+                <a href="/about" class="rail-item active" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
+            </div>
+        </div>
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <header class="header"><div class="header-inner"><div class="header-title">About</div></div></header>
+
+        <main class="main">
+            <div class="hero">
+                <div class="hero-logo">TP</div>
+                <h1>TESTERPy2</h1>
+                <p>A Python-based security testing platform for evaluating EDR/AV detection capabilities against real-world attack techniques.</p>
+                <div class="hero-badges">
+                    <span class="badge mitre">T1059.006</span>
+                    <span class="badge version">v2.0.0</span>
+                    <span class="badge">Python</span>
+                    <span class="badge">Flask</span>
+                </div>
+            </div>
+
+            <section class="section">
+                <h2 class="section-title">📋 Project Information</h2>
+                <div class="card">
+                    <div class="card-grid">
+                        <div class="info-item"><div class="info-label">Project Name</div><div class="info-value">TESTERPy2</div></div>
+                        <div class="info-item"><div class="info-label">Version</div><div class="info-value">2.0.0</div></div>
+                        <div class="info-item"><div class="info-label">License</div><div class="info-value">MIT License</div></div>
+                        <div class="info-item"><div class="info-label">Platform</div><div class="info-value">Windows, Linux, macOS</div></div>
+                        <div class="info-item"><div class="info-label">GitHub</div><div class="info-value"><a href="https://github.com/breachsimrange/testerpy2" target="_blank">github.com/breachsimrange/testerpy2</a></div></div>
+                        <div class="info-item"><div class="info-label">Documentation</div><div class="info-value"><a href="https://docs.breachsimrange.com/testerpy2" target="_blank">docs.breachsimrange.com</a></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">🏢 Company</h2>
+                <div class="card">
+                    <div class="card-grid">
+                        <div class="info-item"><div class="info-label">Company Name</div><div class="info-value">BreachSimRange</div></div>
+                        <div class="info-item"><div class="info-label">Website</div><div class="info-value"><a href="https://breachsimrange.com" target="_blank">breachsimrange.com</a></div></div>
+                        <div class="info-item"><div class="info-label">Industry</div><div class="info-value">Cybersecurity Consulting</div></div>
+                        <div class="info-item"><div class="info-label">Services</div><div class="info-value">Red Teaming, Penetration Testing</div></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">👥 Team</h2>
+                <div class="team-grid">
+                    <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Lead Developer</div><div class="team-role">Author & Maintainer</div></div>
+                    <div class="team-card"><div class="team-avatar">🛡️</div><div class="team-name">Security Research</div><div class="team-role">Technique Development</div></div>
+                    <div class="team-card"><div class="team-avatar">🎨</div><div class="team-name">UI/UX Design</div><div class="team-role">Interface Design</div></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">✨ Features</h2>
+                <div class="feature-list">
+                    <div class="feature-item"><div class="feature-icon">💉</div><div class="feature-content"><h4>Shellcode Loader Testing</h4><p>Test EDR detection of Python-based shellcode injection techniques</p></div></div>
+                    <div class="feature-item"><div class="feature-icon">🛡️</div><div class="feature-content"><h4>Defense Evasion</h4><p>Evaluate AMSI bypass and security product evasion capabilities</p></div></div>
+                    <div class="feature-item"><div class="feature-icon">🔑</div><div class="feature-content"><h4>Credential Dumping</h4><p>Test detection of credential harvesting from Windows systems</p></div></div>
+                    <div class="feature-item"><div class="feature-icon">🌐</div><div class="feature-content"><h4>Browser Data Theft</h4><p>Assess detection of browser credential and cookie extraction</p></div></div>
+                    <div class="feature-item"><div class="feature-icon">🔍</div><div class="feature-content"><h4>Discovery & Collection</h4><p>Test detection of reconnaissance and data collection activities</p></div></div>
+                </div>
+            </section>
+
+            <div class="cta-card">
+                <h3>Get Started</h3>
+                <p>Deploy agents and start testing your security controls today</p>
+                <a href="https://github.com/breachsimrange/testerpy2" target="_blank" class="btn btn-primary">⭐ Star on GitHub</a>
+            </div>
+        </main>
+
+        <footer class="footer"><p>© 2025 TESTERPy2 by BreachSimRange. All rights reserved. For authorized security testing only.</p></footer>
+    </div>
+</body>
+</html>

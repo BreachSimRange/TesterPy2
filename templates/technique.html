@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T1059.006: Python Execution | TESTERPy2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1c1c1c;
+            --border: #2a2a2a;
+            --border-light: #3a3a3a;
+            --white: #ffffff;
+            --white-70: rgba(255,255,255,0.7);
+            --white-50: rgba(255,255,255,0.5);
+            --white-30: rgba(255,255,255,0.3);
+            --white-10: rgba(255,255,255,0.1);
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --purple: #a78bfa;
+            --rail-width: 72px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation Rail */
+        .rail {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--rail-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 100;
+        }
+        .rail-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--bg-dark);
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+        .rail-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+        .rail-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        .rail-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .rail-item:hover { background: var(--white-10); }
+        .rail-item.active { background: var(--white); color: var(--bg-dark); }
+        .rail-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            z-index: 1000;
+        }
+        .rail-item:hover::after { opacity: 1; visibility: visible; }
+        .rail-footer { margin-top: auto; }
+        .rail-mitre {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .rail-mitre:hover { background: var(--white-10); }
+        
+        /* Main Layout */
+        .main-wrapper { margin-left: var(--rail-width); min-height: 100vh; }
+        .header {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+        }
+        .header-inner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link {
+            padding: 8px 12px;
+            background: var(--white-10);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--white-70);
+            text-decoration: none;
+            font-size: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active { background: var(--white); color: var(--bg-dark); }
+        
+        .main { max-width: 1200px; margin: 0 auto; padding: 48px 32px; }
+        
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 48px;
+        }
+        
+        /* Technique Header */
+        .technique-header {
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+        .technique-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .technique-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 12px;
+            background: var(--error);
+            color: var(--white);
+            border-radius: 6px;
+        }
+        .technique-tactic {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            padding: 6px 12px;
+            background: var(--purple);
+            color: var(--white);
+            border-radius: 6px;
+        }
+        .platform-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 6px 10px;
+            background: var(--info);
+            color: var(--bg-dark);
+            border-radius: 6px;
+        }
+        h1 {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: var(--white-70);
+            max-width: 700px;
+        }
+        
+        /* Sections */
+        .section { margin-bottom: 40px; }
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--error);
+            border-radius: 2px;
+        }
+        p { color: var(--white-70); margin-bottom: 16px; font-size: 15px; }
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            padding: 2px 6px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            color: var(--error);
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        
+        /* Lists */
+        ul { list-style: none; }
+        li {
+            padding: 12px 0;
+            padding-left: 24px;
+            position: relative;
+            color: var(--white-70);
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        li:last-child { border-bottom: none; }
+        li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--error);
+        }
+        li strong { color: var(--white); }
+        
+        /* APT Grid */
+        .apt-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .apt-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--white-70);
+        }
+        .apt-tag .flag { font-size: 18px; }
+        
+        /* Test Scenario Cards */
+        .test-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+        .test-card:hover {
+            border-color: var(--error);
+            background: var(--bg-elevated);
+        }
+        .test-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .test-card-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            background: var(--white);
+            color: var(--bg-dark);
+            border-radius: 4px;
+        }
+        .test-card-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+        }
+        .test-card p {
+            font-size: 13px;
+            color: var(--white-50);
+            margin: 0;
+        }
+        
+        /* Detection Table */
+        .detection-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .detection-table th,
+        .detection-table td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .detection-table th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            color: var(--white-50);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        .detection-table td { color: var(--white-70); }
+        .detection-table tr:hover td { background: var(--bg-elevated); }
+        
+        /* Sidebar */
+        .sidebar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .sidebar-card h3 {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--white);
+        }
+        .sidebar-card ul { margin: 0; }
+        .sidebar-card li {
+            padding: 8px 0;
+            padding-left: 20px;
+            font-size: 13px;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 4px 10px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            color: var(--white-50);
+        }
+        .tag.tactic { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
+        .tag.platform { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+        
+        .external-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--white-70);
+            text-decoration: none;
+            font-size: 13px;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .external-link:hover {
+            background: var(--bg-dark);
+            color: var(--error);
+            border-color: var(--error);
+        }
+        
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .footer p {
+            font-size: 13px;
+            color: var(--white-50);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        @media (max-width: 900px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .apt-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .rail { display: none; }
+            .main-wrapper { margin-left: 0; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Rail -->
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
+                <a href="/technique" class="rail-item active" data-tooltip="T1059.006"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+                <a href="/about" class="rail-item" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
+            </div>
+        </div>
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <div class="header-title">T1059.006: Python Execution</div>
+                <nav class="nav-links">
+                    <a href="/technique/shellcode_loader" class="nav-link">T001</a>
+                    <a href="/technique/defense_evasion" class="nav-link">T002</a>
+                    <a href="/technique/credential_dumper" class="nav-link">T003</a>
+                    <a href="/technique/browser_stealer" class="nav-link">T004</a>
+                    <a href="/technique/discovery_collection" class="nav-link">T005</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="technique-header">
+                <div class="technique-badge">
+                    <span class="technique-id">T1059.006</span>
+                    <span class="technique-tactic">Execution</span>
+                    <span class="platform-tag">Windows</span>
+                    <span class="platform-tag">Linux</span>
+                    <span class="platform-tag">macOS</span>
+                </div>
+                <h1>Command and Scripting Interpreter: Python</h1>
+                <p class="subtitle">Adversaries may abuse Python commands and scripts for execution. Python is a very popular scripting/programming language with capabilities to perform many functions including system administration, data analysis, and malicious operations.</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="main-content">
+                    <section class="section">
+                        <h2>Description</h2>
+                        <p>Adversaries may abuse Python commands and scripts for execution. Python is a very popular scripting/programming language, with capabilities to perform many functions. Python can be executed interactively from the command-line (via the <code>python.exe</code> interpreter) or via scripts (.py) that can be written and distributed to different systems.</p>
+                        <p>Python comes with many built-in packages to interact with the underlying system, such as file operations and device I/O. Adversaries can use these libraries to download and execute commands or other scripts as well as perform various malicious behaviors.</p>
+                        <p>Python code can also be compiled into binary executables using tools like PyInstaller, py2exe, or Nuitka - making detection more challenging as the Python interpreter is bundled within the executable.</p>
+                    </section>
+
+                    <section class="section">
+                        <h2>Why Python for Offensive Operations?</h2>
+                        <div class="card">
+                            <ul>
+                                <li><strong>Cross-platform:</strong> Same code runs on Windows, Linux, and macOS with minimal modifications</li>
+                                <li><strong>Rich standard library:</strong> ctypes, subprocess, socket, os, and more provide low-level system access</li>
+                                <li><strong>Easy obfuscation:</strong> Code can be compiled, packed, or obfuscated to evade detection</li>
+                                <li><strong>Legitimate presence:</strong> Python is installed on many systems for development and automation</li>
+                                <li><strong>Rapid development:</strong> Quick iteration on payloads and tools</li>
+                                <li><strong>Living-off-the-land:</strong> Using Python that's already installed avoids dropping additional binaries</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="section">
+                        <h2>Known Threat Actors Using Python</h2>
+                        <div class="apt-grid">
+                            <div class="apt-tag"><span class="flag">🇷🇺</span> APT29 (SeaDuke)</div>
+                            <div class="apt-tag"><span class="flag">🇰🇵</span> Lazarus (InvisibleFerret)</div>
+                            <div class="apt-tag"><span class="flag">🇮🇷</span> APT39 (Chafer)</div>
+                            <div class="apt-tag"><span class="flag">🇮🇷</span> MuddyWater</div>
+                            <div class="apt-tag"><span class="flag">🇨🇳</span> APT31 (ZIRCONIUM)</div>
+                            <div class="apt-tag"><span class="flag">🇷🇺</span> Turla</div>
+                            <div class="apt-tag"><span class="flag">🇻🇪</span> Machete</div>
+                            <div class="apt-tag"><span class="flag">🇨🇳</span> Earth Lusca</div>
+                        </div>
+                    </section>
+
+                    <section class="section">
+                        <h2>Test Scenarios in TESTERPy2</h2>
+                        
+                        <a href="/technique/shellcode_loader" class="test-card">
+                            <div class="test-card-header">
+                                <span class="test-card-id">T001</span>
+                                <span class="test-card-title">Python Shellcode Loader</span>
+                            </div>
+                            <p>Tests detection of Python-based memory injection using ctypes for VirtualAlloc, memory copying, and thread creation. Emulates techniques from Donut framework and APT29's SeaDuke malware.</p>
+                        </a>
+
+                        <a href="/technique/defense_evasion" class="test-card">
+                            <div class="test-card-header">
+                                <span class="test-card-id">T002</span>
+                                <span class="test-card-title">Python Defense Evasion</span>
+                            </div>
+                            <p>Tests detection of security product tampering including AMSI bypass via AmsiScanBuffer patching, ETW provider manipulation, and ntdll unhooking.</p>
+                        </a>
+
+                        <a href="/technique/credential_dumper" class="test-card">
+                            <div class="test-card-header">
+                                <span class="test-card-id">T003</span>
+                                <span class="test-card-title">Python Credential Dumper</span>
+                            </div>
+                            <p>Tests detection of credential harvesting techniques including SAM database extraction, LSASS memory access, DPAPI decryption, and Linux shadow file access.</p>
+                        </a>
+
+                        <a href="/technique/browser_stealer" class="test-card">
+                            <div class="test-card-header">
+                                <span class="test-card-id">T004</span>
+                                <span class="test-card-title">Python Browser Stealer</span>
+                            </div>
+                            <p>Tests detection of browser data theft targeting Chrome, Firefox, and Edge for credentials, cookies, and session data. Emulates CookieMiner and Lumma Stealer.</p>
+                        </a>
+
+                        <a href="/technique/discovery_collection" class="test-card">
+                            <div class="test-card-header">
+                                <span class="test-card-id">T005</span>
+                                <span class="test-card-title">Python Discovery & Collection</span>
+                            </div>
+                            <p>Tests detection of reconnaissance and surveillance capabilities including system enumeration, screenshot capture, and keylogger functionality.</p>
+                        </a>
+                    </section>
+
+                    <section class="section">
+                        <h2>Detection Opportunities</h2>
+                        <table class="detection-table">
+                            <thead>
+                                <tr>
+                                    <th>Data Source</th>
+                                    <th>Detection Logic</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Process Creation</td>
+                                    <td>Python.exe or py.exe with suspicious parent process (Office, LOLBAS)</td>
+                                </tr>
+                                <tr>
+                                    <td>Command Line</td>
+                                    <td>Python executing encoded/base64 content or suspicious imports</td>
+                                </tr>
+                                <tr>
+                                    <td>API Monitoring</td>
+                                    <td>Python process calling VirtualAlloc with PAGE_EXECUTE_READWRITE</td>
+                                </tr>
+                                <tr>
+                                    <td>File Access</td>
+                                    <td>Python accessing browser profile directories or credential stores</td>
+                                </tr>
+                                <tr>
+                                    <td>Network Traffic</td>
+                                    <td>Python making outbound connections to suspicious destinations</td>
+                                </tr>
+                                <tr>
+                                    <td>Module Load</td>
+                                    <td>Python loading ctypes, pywin32, or other system interaction modules</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="section">
+                        <h2>Mitigations</h2>
+                        <div class="card">
+                            <ul>
+                                <li><strong>M1049 - Antivirus/Antimalware:</strong> Use AV to quarantine suspicious Python scripts</li>
+                                <li><strong>M1047 - Audit:</strong> Inventory systems for unauthorized Python installations</li>
+                                <li><strong>M1038 - Execution Prevention:</strong> Denylist Python where not required</li>
+                                <li><strong>M1033 - Limit Software Installation:</strong> Prevent users from installing Python</li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+
+                <aside>
+                    <div class="sidebar-card">
+                        <h3>Technique Metadata</h3>
+                        <p style="font-size: 12px; color: var(--white-50); margin-bottom: 12px;">
+                            ID: T1059.006<br>
+                            Created: March 9, 2020<br>
+                            Last Modified: October 24, 2025<br>
+                            Version: 1.1
+                        </p>
+                        <div class="tag-list">
+                            <span class="tag tactic">Execution</span>
+                            <span class="tag platform">Windows</span>
+                            <span class="tag platform">Linux</span>
+                            <span class="tag platform">macOS</span>
+                            <span class="tag platform">ESXi</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3>Related Techniques</h3>
+                        <ul>
+                            <li>T1055 - Process Injection</li>
+                            <li>T1562.001 - Disable Security Tools</li>
+                            <li>T1003 - OS Credential Dumping</li>
+                            <li>T1555.003 - Credentials from Browsers</li>
+                            <li>T1082 - System Information Discovery</li>
+                            <li>T1113 - Screen Capture</li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3>Known Malware</h3>
+                        <ul>
+                            <li>SeaDuke (APT29)</li>
+                            <li>InvisibleFerret</li>
+                            <li>PoetRAT</li>
+                            <li>Machete</li>
+                            <li>CookieMiner</li>
+                            <li>Lumma Stealer</li>
+                            <li>SILENTTRINITY</li>
+                            <li>Pupy RAT</li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3>External Resources</h3>
+                        <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="external-link">
+                            📖 MITRE ATT&CK Page
+                        </a>
+                        <a href="https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.006/T1059.006.md" target="_blank" class="external-link">
+                            🔬 Atomic Red Team Tests
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 TESTERPy2. All rights reserved. BreachSimRange.io</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTERPy2 | T1059.006 Security Testing Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1c1c1c;
+            --bg-hover: #242424;
+            --border: #2a2a2a;
+            --border-light: #3a3a3a;
+            --white: #ffffff;
+            --white-90: rgba(255,255,255,0.9);
+            --white-70: rgba(255,255,255,0.7);
+            --white-50: rgba(255,255,255,0.5);
+            --white-30: rgba(255,255,255,0.3);
+            --white-10: rgba(255,255,255,0.1);
+            --white-05: rgba(255,255,255,0.05);
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --purple: #a78bfa;
+            --rail-width: 72px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation Rail */
+        .rail {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--rail-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 100;
+        }
+
+        .rail-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--bg-dark);
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+
+        .rail-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .rail-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .rail-section:not(:last-child) {
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+            padding-bottom: 16px;
+        }
+
+        .rail-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .rail-item:hover {
+            background: var(--white-10);
+        }
+
+        .rail-item.active {
+            background: var(--white);
+            color: var(--bg-dark);
+        }
+
+        .rail-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .rail-item:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .rail-footer {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rail-mitre {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--white-05);
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .rail-mitre:hover {
+            background: var(--white-10);
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: var(--rail-width);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--white-50);
+            letter-spacing: 0.5px;
+        }
+
+        .mitre-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            background: var(--white-05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            text-decoration: none;
+            color: var(--white-70);
+            transition: all 0.2s ease;
+        }
+
+        .mitre-tag:hover {
+            background: var(--white-10);
+            color: var(--white);
+        }
+
+        .mitre-tag code {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .main {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .hero-content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .hero-content p {
+            color: var(--white-70);
+            font-size: 14px;
+            max-width: 640px;
+        }
+
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--white);
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .hero-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255,255,255,0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--white-50);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .stat-card.success .stat-value { color: var(--success); }
+        .stat-card.detected .stat-value { color: var(--warning); }
+        .stat-card.failed .stat-value { color: var(--error); }
+        .stat-card.pending .stat-value { color: var(--info); }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .panel-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--white);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .panel-body { padding: 20px; }
+
+        .tests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .test-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .test-card:hover { border-color: var(--border-light); }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .test-name { font-size: 15px; font-weight: 600; }
+
+        .test-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 4px 8px;
+            background: var(--white-10);
+            border-radius: 4px;
+            color: var(--white-70);
+        }
+
+        .test-description {
+            font-size: 13px;
+            color: var(--white-50);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .test-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag.category { background: var(--purple); color: var(--bg-dark); }
+        .tag.platform { background: var(--white-10); color: var(--white-70); }
+        .tag.risk-high { background: var(--warning); color: var(--bg-dark); }
+        .tag.risk-critical { background: var(--error); color: var(--white); }
+        .tag.risk-medium { background: var(--info); color: var(--bg-dark); }
+
+        .test-actions { display: flex; gap: 8px; }
+
+        .btn {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+        }
+
+        .btn-primary:disabled {
+            background: var(--white-10);
+            color: var(--white-30);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white-70);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white-05);
+            color: var(--white);
+        }
+
+        .sidebar-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .agents-list, .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .results-list { max-height: 400px; overflow-y: auto; }
+
+        .agent-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .agent-card:hover { border-color: var(--border-light); }
+        .agent-card.selected { border-color: var(--white); background: var(--bg-hover); }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .agent-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .agent-status.active { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+        .agent-status.inactive { background: rgba(248, 113, 113, 0.15); color: var(--error); }
+        .agent-status.stale { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .agent-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--white-50);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .no-agents, .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--white-50);
+        }
+
+        .no-agents code {
+            display: block;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--white-70);
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            border-left: 3px solid var(--border);
+        }
+
+        .result-item.success { border-left-color: var(--success); }
+        .result-item.detected { border-left-color: var(--warning); }
+        .result-item.failed { border-left-color: var(--error); }
+        .result-item.pending { border-left-color: var(--info); }
+
+        .result-status {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            min-width: 72px;
+            text-align: center;
+        }
+
+        .result-status.success { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+        .result-status.detected { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+        .result-status.failed { background: rgba(248, 113, 113, 0.15); color: var(--error); }
+        .result-status.pending { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+        .result-status.skipped { background: var(--white-05); color: var(--white-50); }
+
+        .result-info { flex: 1; min-width: 0; }
+        .result-name { font-size: 13px; font-weight: 500; }
+        .result-agent { font-size: 11px; color: var(--white-50); font-family: 'IBM Plex Mono', monospace; }
+        .result-time { font-size: 11px; color: var(--white-30); font-family: 'IBM Plex Mono', monospace; }
+
+        .view-all-link {
+            font-size: 12px;
+            color: var(--white-50);
+            text-decoration: none;
+        }
+
+        .view-all-link:hover { color: var(--white); }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--white-50);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        @media (max-width: 1400px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .rail { display: none; }
+            .main-wrapper { margin-left: 0; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Rail -->
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item active" data-tooltip="Dashboard">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </a>
+                <a href="/results" class="rail-item" data-tooltip="Results">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </a>
+                <a href="/about" class="rail-item" data-tooltip="About">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>TESTERPy2</h1>
+                        <span>SECURITY TESTING PLATFORM</span>
+                    </div>
+                </div>
+                <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="mitre-tag">
+                    <code>T1059.006</code>
+                    <span>Python Execution →</span>
+                </a>
+            </div>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>TESTERPY2 Python-Based Offensive Testing</h2>
+                    <p>Evaluate your EDR/AV detection capabilities against real-world Python-based attack techniques used by APT29, Lazarus, MuddyWater, and other threat actors.</p>
+                </div>
+                <a href="/technique" class="hero-link">View Technique Details →</a>
+            </section>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Agents</div>
+                    <div class="stat-value" id="stat-agents">0</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">Bypassed</div>
+                    <div class="stat-value" id="stat-success">0</div>
+                </div>
+                <div class="stat-card detected">
+                    <div class="stat-label">Detected</div>
+                    <div class="stat-value" id="stat-detected">0</div>
+                </div>
+                <div class="stat-card failed">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value" id="stat-failed">0</div>
+                </div>
+                <div class="stat-card pending">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="stat-pending">0</div>
+                </div>
+            </section>
+
+            <div class="content-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Test Scenarios</div>
+                        <button class="btn btn-primary" id="run-all-btn" disabled>▶ Run All Tests</button>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tests-list" id="tests-container">
+                            {% for key, test in tests.items() %}
+                            <div class="test-card" data-test="{{ key }}">
+                                <div class="test-header">
+                                    <div class="test-name">{{ test.name }}</div>
+                                    <div class="test-id">{{ test.id }}</div>
+                                </div>
+                                <div class="test-description">{{ test.description }}</div>
+                                <div class="test-tags">
+                                    <span class="tag category">{{ test.category }}</span>
+                                    {% for platform in test.platforms %}
+                                    <span class="tag platform">{{ platform }}</span>
+                                    {% endfor %}
+                                    <span class="tag risk-{{ test.risk_level }}">{{ test.risk_level }}</span>
+                                </div>
+                                <div class="test-actions">
+                                    <button class="btn btn-primary execute-btn" data-test="{{ key }}" disabled>▶ Execute</button>
+                                    <a href="/technique/{{ key }}" class="btn btn-secondary">Details</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-stack">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Connected Agents</div>
+                            <a href="/agents" class="view-all-link">View All →</a>
+                        </div>
+                        <div class="panel-body">
+                            <div class="agents-list" id="agents-list">
+                                <div class="no-agents">
+                                    <p>No agents connected</p>
+                                    <code>python agent.py -s http://server:5000</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Test Results</div>
+                            <a href="/results" class="view-all-link">View All →</a>
+                        </div>
+                        <div class="panel-body">
+                            <div class="results-list" id="results-list">
+                                <div class="no-results">No test results yet</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 TESTERPy2. All rights reserved. BreachSimRange.io</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedAgent = null, agents = [];
+
+        async function updateStats() {
+            try {
+                const data = await (await fetch('/api/stats')).json();
+                document.getElementById('stat-agents').textContent = data.agents.active;
+                document.getElementById('stat-success').textContent = data.tests.success;
+                document.getElementById('stat-detected').textContent = data.tests.detected;
+                document.getElementById('stat-failed').textContent = data.tests.failed;
+                document.getElementById('stat-pending').textContent = data.tests.pending;
+            } catch (e) {}
+        }
+
+        async function updateAgents() {
+            try {
+                agents = await (await fetch('/api/agents')).json();
+                const c = document.getElementById('agents-list');
+                if (!agents.length) {
+                    c.innerHTML = `<div class="no-agents"><p>No agents connected</p><code>python agent.py -s http://server:5000</code></div>`;
+                    selectedAgent = null;
+                    document.querySelectorAll('.execute-btn, #run-all-btn').forEach(b => b.disabled = true);
+                    return;
+                }
+                c.innerHTML = agents.map(a => `
+                    <div class="agent-card ${selectedAgent === a.agent_id ? 'selected' : ''}" onclick="selectAgent('${a.agent_id}', this)">
+                        <div class="agent-header">
+                            <div class="agent-name">${a.hostname}</div>
+                            <div class="agent-status ${a.status}"><span class="status-dot"></span>${a.status}</div>
+                        </div>
+                        <div class="agent-meta">
+                            <span>${a.agent_id}</span><span>${a.platform}</span>
+                            <span>${a.username}</span><span>Py ${a.python_version}</span>
+                        </div>
+                    </div>
+                `).join('');
+                if (!selectedAgent && agents.length) selectAgent(agents[0].agent_id, c.querySelector('.agent-card'));
+            } catch (e) {}
+        }
+
+        async function updateResults() {
+            try {
+                let results = await (await fetch('/api/results')).json();
+                const c = document.getElementById('results-list');
+                if (!results.length) { c.innerHTML = '<div class="no-results">No test results yet</div>'; return; }
+                results.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+                c.innerHTML = results.slice(0, 15).map(r => `
+                    <div class="result-item ${r.status}">
+                        <span class="result-status ${r.status}">${r.status}</span>
+                        <div class="result-info">
+                            <div class="result-name">${r.test_name}</div>
+                            <div class="result-agent">${(agents.find(a => a.agent_id === r.agent_id) || {}).hostname || r.agent_id}</div>
+                        </div>
+                        <div class="result-time">${new Date(r.start_time).toLocaleTimeString()}</div>
+                    </div>
+                `).join('');
+            } catch (e) {}
+        }
+
+        function selectAgent(id, el) {
+            selectedAgent = id;
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('selected'));
+            if (el) el.classList.add('selected');
+            document.querySelectorAll('.execute-btn, #run-all-btn').forEach(b => b.disabled = false);
+        }
+
+        document.querySelectorAll('.execute-btn').forEach(btn => {
+            btn.addEventListener('click', async e => {
+                e.stopPropagation();
+                if (!selectedAgent) return;
+                await fetch('/api/execute', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agent_id: selectedAgent, test_name: btn.dataset.test }) });
+                updateResults(); updateStats();
+            });
+        });
+
+        document.getElementById('run-all-btn').addEventListener('click', async () => {
+            if (!selectedAgent) return;
+            await fetch('/api/execute_all', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agent_id: selectedAgent }) });
+            updateResults(); updateStats();
+        });
+
+        updateStats(); updateAgents(); updateResults();
+        setInterval(updateStats, 3000); setInterval(updateAgents, 5000); setInterval(updateResults, 3000);
+    </script>
+</body>
+</html>

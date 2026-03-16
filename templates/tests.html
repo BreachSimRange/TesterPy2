@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Tests | TESTERPy2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d0d0d;
+            --bg-card: #161616;
+            --bg-elevated: #1c1c1c;
+            --bg-hover: #242424;
+            --border: #2a2a2a;
+            --border-light: #3a3a3a;
+            --white: #ffffff;
+            --white-90: rgba(255,255,255,0.9);
+            --white-70: rgba(255,255,255,0.7);
+            --white-50: rgba(255,255,255,0.5);
+            --white-30: rgba(255,255,255,0.3);
+            --white-10: rgba(255,255,255,0.1);
+            --white-05: rgba(255,255,255,0.05);
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --purple: #a78bfa;
+            --rail-width: 72px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation Rail */
+        .rail {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--rail-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 100;
+        }
+
+        .rail-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--bg-dark);
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+
+        .rail-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .rail-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .rail-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .rail-item:hover { background: var(--white-10); }
+        .rail-item.active { background: var(--white); color: var(--bg-dark); }
+
+        .rail-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--white);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            z-index: 1000;
+        }
+
+        .rail-item:hover::after { opacity: 1; visibility: visible; }
+
+        .rail-footer {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rail-mitre {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--white-05);
+            color: #ef4444;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .rail-mitre:hover { background: var(--white-10); }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: var(--rail-width);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+                .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-header p { color: var(--white-50); font-size: 14px; }
+
+        /* Agent Selector */
+        .agent-selector {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .agent-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .agent-selector-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .agent-selector-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--error);
+            border-radius: 2px;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .agent-card {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .agent-card:hover {
+            border-color: var(--border-light);
+            background: var(--bg-hover);
+        }
+
+        .agent-card.selected {
+            border-color: var(--success);
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .agent-card.offline {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .agent-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .agent-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .agent-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .agent-status.offline {
+            background: var(--error);
+        }
+
+        .agent-info {
+            font-size: 12px;
+            color: var(--white-50);
+        }
+
+        .agent-info span {
+            display: block;
+            margin-top: 4px;
+        }
+
+        .no-agents {
+            text-align: center;
+            padding: 40px;
+            color: var(--white-50);
+        }
+
+        .no-agents-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Test Cards */
+        .tests-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--error);
+            border-radius: 2px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--white-70);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            color: var(--white);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+        }
+
+        .test-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .test-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .test-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .test-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: var(--white);
+            color: var(--bg-dark);
+            border-radius: 6px;
+        }
+
+        .test-status {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--white-10);
+            color: var(--white-50);
+        }
+
+        .test-status.success { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+        .test-status.detected { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+        .test-status.failed { background: rgba(248, 113, 113, 0.15); color: var(--error); }
+        .test-status.pending { background: rgba(96, 165, 250, 0.15); color: var(--info); }
+        .test-status.running { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
+
+        .test-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .test-description {
+            font-size: 13px;
+            color: var(--white-50);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .test-techniques {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .technique-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 4px 8px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--white-50);
+        }
+
+        .test-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .test-link {
+            font-size: 12px;
+            color: var(--info);
+            text-decoration: none;
+        }
+
+        .test-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-execute {
+            padding: 8px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--white-70);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-execute:hover {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--bg-dark);
+        }
+
+        .btn-execute:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Log */
+        .results-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .results-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--error);
+            border-radius: 2px;
+        }
+
+        .results-log {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--white-30);
+            flex-shrink: 0;
+        }
+
+        .log-message {
+            color: var(--white-70);
+        }
+
+        .log-message.success { color: var(--success); }
+        .log-message.error { color: var(--error); }
+        .log-message.warning { color: var(--warning); }
+        .log-message.info { color: var(--info); }
+
+        .empty-log {
+            text-align: center;
+            padding: 40px;
+            color: var(--white-30);
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--white-50);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .rail { display: none; }
+            .main-wrapper { margin-left: 0; }
+            .test-grid { grid-template-columns: 1fr; }
+            .agent-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Rail -->
+    <nav class="rail">
+        <a href="/" class="rail-logo">TP</a>
+        <div class="rail-nav">
+            <div class="rail-section">
+                <a href="/" class="rail-item" data-tooltip="Dashboard">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </a>
+                <a href="/agents" class="rail-item" data-tooltip="Agents">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </a>
+                <a href="/tests" class="rail-item active" data-tooltip="Run Tests">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </a>
+                <a href="/results" class="rail-item" data-tooltip="Results">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </a>
+                <a href="/technique" class="rail-item" data-tooltip="T1059.006">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </a>
+                <a href="/about" class="rail-item" data-tooltip="About">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="rail-footer">
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <h1 class="header-title">Run Tests</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="runAllBtn" disabled onclick="runAllTests()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Run All Tests
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+                <div class="page-header">
+                <h1>Run tests</h1>
+                <p>Select target agents and run tests.</p>
+            </div>
+            <div class="agent-selector">
+                <div class="agent-selector-header">
+                    <h2 class="agent-selector-title">Select Target Agent</h2>
+                    <button class="btn btn-secondary" onclick="refreshAgents()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                        Refresh
+                    </button>
+                </div>
+                <div class="agent-grid" id="agentGrid">
+                    <div class="no-agents">
+                        <div class="no-agents-icon">🖥️</div>
+                        <p>Loading agents...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Scenarios -->
+            <div class="tests-section">
+                <div class="section-header">
+                    <h2 class="section-title">Test Scenarios</h2>
+                </div>
+                <div class="test-grid" id="testGrid">
+                    <!-- Test cards will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Results Log -->
+            <div class="results-section">
+                <div class="results-header">
+                    <h2 class="results-title">Execution Log</h2>
+                    <button class="btn btn-secondary" onclick="clearLog()">Clear Log</button>
+                </div>
+                <div class="results-log" id="resultsLog">
+                    <div class="empty-log">No test executions yet. Select an agent and run tests.</div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 TESTERPy2. All rights reserved. BreachSimRange.io</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedAgent = null;
+        let agents = [];
+        let testStatuses = {};
+
+        const TEST_SCENARIOS = [
+            {
+                id: 'shellcode_loader',
+                name: 'T001: Python Shellcode Loader',
+                description: 'Tests EDR detection of Python-based memory injection using ctypes for VirtualAlloc, memory copying, and thread creation.',
+                techniques: ['T1059.006', 'T1055.001', 'T1106'],
+                link: '/technique/shellcode_loader'
+            },
+            {
+                id: 'defense_evasion',
+                name: 'T002: Python Defense Evasion',
+                description: 'Tests detection of security product tampering including AMSI bypass, ETW manipulation, and ntdll unhooking.',
+                techniques: ['T1059.006', 'T1562.001', 'T1027'],
+                link: '/technique/defense_evasion'
+            },
+            {
+                id: 'credential_dumper',
+                name: 'T003: Python Credential Dumper',
+                description: 'Tests detection of credential harvesting including SAM extraction, LSASS access, DPAPI decryption, and shadow file access.',
+                techniques: ['T1059.006', 'T1003.001', 'T1003.002', 'T1552.001'],
+                link: '/technique/credential_dumper'
+            },
+            {
+                id: 'browser_stealer',
+                name: 'T004: Python Browser Stealer',
+                description: 'Tests detection of browser data theft targeting Chrome, Firefox, and Edge for credentials, cookies, and session data.',
+                techniques: ['T1059.006', 'T1555.003', 'T1539'],
+                link: '/technique/browser_stealer'
+            },
+            {
+                id: 'discovery_collection',
+                name: 'T005: Python Discovery & Collection',
+                description: 'Tests detection of reconnaissance including system enumeration, screenshot capture, and keylogger functionality.',
+                techniques: ['T1059.006', 'T1082', 'T1083', 'T1056.001', 'T1113'],
+                link: '/technique/discovery_collection'
+            }
+        ];
+
+        function formatTime() {
+            return new Date().toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        function addLogEntry(message, type = '') {
+            const log = document.getElementById('resultsLog');
+            const emptyLog = log.querySelector('.empty-log');
+            if (emptyLog) emptyLog.remove();
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">${formatTime()}</span>
+                <span class="log-message ${type}">${message}</span>
+            `;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('resultsLog').innerHTML = '<div class="empty-log">Log cleared.</div>';
+        }
+
+        async function refreshAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                agents = await response.json();
+                renderAgents();
+            } catch (error) {
+                console.error('Failed to fetch agents:', error);
+                addLogEntry('Failed to fetch agents: ' + error.message, 'error');
+            }
+        }
+
+        function renderAgents() {
+            const grid = document.getElementById('agentGrid');
+            
+            if (agents.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-agents">
+                        <div class="no-agents-icon">🖥️</div>
+                        <p>No agents connected</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Deploy agent.py on target systems to begin testing</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = agents.map(agent => {
+                const isOnline = agent.status === 'online';
+                const isSelected = selectedAgent === agent.agent_id;
+                return `
+                    <div class="agent-card ${isSelected ? 'selected' : ''} ${!isOnline ? 'offline' : ''}" 
+                         onclick="${isOnline ? `selectAgent('${agent.agent_id}')` : ''}">
+                        <div class="agent-card-header">
+                            <span class="agent-name">${agent.hostname}</span>
+                            <span class="agent-status ${!isOnline ? 'offline' : ''}"></span>
+                        </div>
+                        <div class="agent-info">
+                            <span>${agent.os} ${agent.arch}</span>
+                            <span>Last seen: ${agent.last_seen || 'Never'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectAgent(agentId) {
+            selectedAgent = agentId;
+            renderAgents();
+            document.getElementById('runAllBtn').disabled = false;
+            document.querySelectorAll('.btn-execute').forEach(btn => btn.disabled = false);
+            
+            const agent = agents.find(a => a.agent_id === agentId);
+            addLogEntry(`Selected agent: ${agent.hostname}`, 'info');
+        }
+
+        function renderTests() {
+            const grid = document.getElementById('testGrid');
+            
+            grid.innerHTML = TEST_SCENARIOS.map(test => {
+                const status = testStatuses[test.id] || 'ready';
+                return `
+                    <div class="test-card">
+                        <div class="test-card-header">
+                            <span class="test-id">${test.name.split(':')[0]}</span>
+                            <span class="test-status ${status}">${status}</span>
+                        </div>
+                        <h3 class="test-name">${test.name.split(': ')[1]}</h3>
+                        <p class="test-description">${test.description}</p>
+                        <div class="test-techniques">
+                            ${test.techniques.map(t => `<span class="technique-tag">${t}</span>`).join('')}
+                        </div>
+                        <div class="test-card-footer">
+                            <a href="${test.link}" class="test-link">View Details →</a>
+                            <button class="btn-execute" disabled onclick="runTest('${test.id}')">Execute</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function runTest(testId) {
+            if (!selectedAgent) {
+                addLogEntry('Please select an agent first', 'warning');
+                return;
+            }
+
+            testStatuses[testId] = 'running';
+            renderTests();
+            addLogEntry(`Executing ${testId} on agent...`, 'info');
+
+            try {
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agent_id: selectedAgent,
+                        test_name: testId
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'queued') {
+                    testStatuses[testId] = 'pending';
+                    addLogEntry(`Test ${testId} queued successfully`, 'success');
+                } else {
+                    testStatuses[testId] = 'failed';
+                    addLogEntry(`Failed to queue ${testId}: ${result.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                testStatuses[testId] = 'failed';
+                addLogEntry(`Error executing ${testId}: ${error.message}`, 'error');
+            }
+
+            renderTests();
+        }
+
+        async function runAllTests() {
+            if (!selectedAgent) {
+                addLogEntry('Please select an agent first', 'warning');
+                return;
+            }
+
+            addLogEntry('Running all tests...', 'info');
+
+            try {
+                const response = await fetch('/api/execute_all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agent_id: selectedAgent })
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'queued') {
+                    TEST_SCENARIOS.forEach(test => {
+                        testStatuses[test.id] = 'pending';
+                    });
+                    addLogEntry(`All ${result.tests_queued} tests queued successfully`, 'success');
+                } else {
+                    addLogEntry(`Failed to queue tests: ${result.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                addLogEntry(`Error running all tests: ${error.message}`, 'error');
+            }
+
+            renderTests();
+        }
+
+        // Poll for results
+        async function pollResults() {
+            try {
+                const response = await fetch('/api/results');
+                const results = await response.json();
+                
+                results.forEach(result => {
+                    if (result.agent_id === selectedAgent && testStatuses[result.test_name] === 'pending') {
+                        testStatuses[result.test_name] = result.status;
+                        addLogEntry(`${result.test_name}: ${result.status} - ${result.details || ''}`, 
+                            result.status === 'success' ? 'success' : 
+                            result.status === 'detected' ? 'warning' : 'error');
+                        renderTests();
+                    }
+                });
+            } catch (error) {
+                // Silently fail polling
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshAgents();
+            renderTests();
+            setInterval(refreshAgents, 10000);
+            setInterval(pollResults, 3000);
+        });
+    </script>
+</body>
+</html>
