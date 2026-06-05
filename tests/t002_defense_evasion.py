@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""
-T002: Python Defense Evasion
-MITRE ATT&CK: T1059.006 + T1562.001
-
-Tests EDR detection of Python-based security product tampering including
-AMSI bypass, ETW patching, and ntdll unhooking techniques.
-
-For authorized security testing only.
-"""
+# T002: Python Defense Evasion - MITRE T1059.006 + T1562.001
 
 import sys
 import os
@@ -17,7 +9,6 @@ import platform
 IS_WINDOWS = platform.system() == "Windows"
 
 def run():
-    """Execute the defense evasion test and return results."""
     result = {
         "status": "pending",
         "details": "",

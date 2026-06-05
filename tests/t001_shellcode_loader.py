@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""
-T001: Python Shellcode Loader
-MITRE ATT&CK: T1059.006 + T1055.001
-
-Tests EDR detection of Python-based shellcode injection using ctypes 
-for memory allocation and execution.
-
-For authorized security testing only.
-"""
+# T001: Python Shellcode Loader - MITRE T1059.006 + T1055.001
 
 import sys
 import json
@@ -16,7 +8,6 @@ import platform
 IS_WINDOWS = platform.system() == "Windows"
 
 def run():
-    """Execute the shellcode loader test and return results."""
     result = {
         "status": "pending",
         "details": "",

@@ -39,7 +39,7 @@
         }
         
         /* Navigation Rail */
-        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
+        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
         .rail-logo { width: 44px; height: 44px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--bg-dark); margin-bottom: 24px; text-decoration: none; }
         .rail-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .rail-section { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
@@ -70,7 +70,9 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-title { font-size: 18px; font-weight: 600; }
+        .logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .logo-text h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; color: var(--white); }
+        .logo-text span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white-50); letter-spacing: 0.5px; }
         .nav-links { display: flex; gap: 8px; }
         .nav-link {
             padding: 8px 12px;
@@ -139,7 +141,6 @@
             font-weight: 600;
             margin-bottom: 16px;
             padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -168,7 +169,7 @@
         }
         .card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 16px;
@@ -199,15 +200,8 @@
             position: relative;
             color: var(--white-70);
             font-size: 14px;
-            border-bottom: 1px solid var(--border);
-        }
+            }
         li:last-child { border-bottom: none; }
-        li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--white-30);
-        }
         li strong { color: var(--white); }
         .code-block {
             background: #0d1117;
@@ -244,7 +238,7 @@
         }
         .detection-item {
             background: var(--bg-elevated);
-            border: 1px solid var(--border);
+            
             border-radius: 8px;
             padding: 16px;
         }
@@ -304,7 +298,7 @@
             gap: 12px;
             padding: 12px 16px;
             background: var(--bg-elevated);
-            border: 1px solid var(--border);
+            
             border-radius: 8px;
             color: var(--white-70);
             text-decoration: none;
@@ -317,7 +311,6 @@
             border-color: var(--border-light);
         }
         .footer {
-            border-top: 1px solid var(--border);
             padding: 24px 32px;
             text-align: center;
             margin-top: 48px;
@@ -345,13 +338,13 @@
             <div class="rail-section">
                 <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
                 <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
-                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></a>
                 <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
                 <a href="/about" class="rail-item" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
             </div>
         </div>
         <div class="rail-footer">
-            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></a>
         </div>
     </nav>
 
@@ -359,7 +352,7 @@
     <div class="main-wrapper">
         <header class="header">
             <div class="header-inner">
-                <div class="header-title">T001: Shellcode Loader</div>
+                <a href="/" class="logo"><div class="logo-text"><h1>TESTERPy2</h1></div></a>
                 <nav class="nav-links">
                     <a href="/technique/shellcode_loader" class="nav-link active">T001</a>
                     <a href="/technique/defense_evasion" class="nav-link">T002</a>
@@ -378,33 +371,33 @@
             </div>
 
             <h1>Python Shellcode Loader</h1>
-            <p class="subtitle">Tests EDR/AV detection of Python-based shellcode injection using ctypes for memory allocation, shellcode copying, and thread execution — techniques used by APT29's SeaDuke and the Donut framework.</p>
+            <p class="subtitle">Tests EDR/AV detection of Python-based shellcode injection using ctypes for memory allocation, shellcode copying, and thread execution. Techniques used by APT29's SeaDuke and the Donut framework.</p>
 
             <section class="section">
-                <h2><span class="icon">📋</span> Overview</h2>
+                <h2>Overview</h2>
                 <p>This test evaluates whether your security solution can detect when Python is used to inject and execute shellcode in memory. The technique leverages Python's <code>ctypes</code> library to call Windows API functions directly, bypassing traditional executable-based detection.</p>
                 <p>Adversaries use this technique because Python scripts are often trusted by security solutions, and the actual malicious code (shellcode) only exists in memory, making it harder to detect through file-based scanning.</p>
             </section>
 
             <section class="section">
-                <h2><span class="icon">⚡</span> Execution Flow</h2>
+                <h2>Execution Flow</h2>
                 <div class="flow-diagram">
                     <div class="flow-steps">
                         <div class="flow-step">
                             <div class="num">STEP 1</div>
                             <div class="label">VirtualAlloc</div>
                         </div>
-                        <span class="flow-arrow">→</span>
+                        <span class="flow-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
                         <div class="flow-step">
                             <div class="num">STEP 2</div>
                             <div class="label">memmove</div>
                         </div>
-                        <span class="flow-arrow">→</span>
+                        <span class="flow-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
                         <div class="flow-step">
                             <div class="num">STEP 3</div>
                             <div class="label">CreateThread</div>
                         </div>
-                        <span class="flow-arrow">→</span>
+                        <span class="flow-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
                         <div class="flow-step">
                             <div class="num">STEP 4</div>
                             <div class="label">Execute</div>
@@ -414,7 +407,7 @@
             </section>
 
             <section class="section">
-                <h2><span class="icon">💻</span> Technical Implementation</h2>
+                <h2>Technical Implementation</h2>
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">t001_shellcode_loader.py</span>
@@ -425,7 +418,7 @@
             </section>
 
             <section class="section">
-                <h2><span class="icon">🔍</span> Detection Opportunities</h2>
+                <h2>Detection Opportunities</h2>
                 <div class="grid-2">
                     <div class="detection-item">
                         <h4>API Call Monitoring</h4>
@@ -441,25 +434,25 @@
                     </div>
                     <div class="detection-item">
                         <h4>Behavioral Pattern</h4>
-                        <p>Sequence: VirtualAlloc → memory write → CreateThread within short timeframe</p>
+                        <p>Sequence: VirtualAlloc > memory write > CreateThread within short timeframe</p>
                     </div>
                 </div>
             </section>
 
             <section class="section">
-                <h2><span class="icon">🎯</span> What This Test Validates</h2>
+                <h2>What This Test Validates</h2>
                 <div class="card">
                     <ul>
-                        <li><strong>Memory protection monitoring</strong> — Can EDR detect RWX memory allocation from scripting interpreters?</li>
-                        <li><strong>API hooking effectiveness</strong> — Are VirtualAlloc/CreateThread calls from Python properly monitored?</li>
-                        <li><strong>Behavioral detection</strong> — Does the EDR correlate the injection pattern across multiple API calls?</li>
-                        <li><strong>Process context awareness</strong> — Is Python treated differently than compiled executables?</li>
+                        <li><strong>Memory protection monitoring</strong> - Can EDR detect RWX memory allocation from scripting interpreters?</li>
+                        <li><strong>API hooking effectiveness</strong> - Are VirtualAlloc/CreateThread calls from Python properly monitored?</li>
+                        <li><strong>Behavioral detection</strong> - Does the EDR correlate the injection pattern across multiple API calls?</li>
+                        <li><strong>Process context awareness</strong> - Is Python treated differently than compiled executables?</li>
                     </ul>
                 </div>
             </section>
 
             <section class="section">
-                <h2><span class="icon">🛡️</span> MITRE ATT&CK Mapping</h2>
+                <h2>MITRE ATT&CK Mapping</h2>
                 <div class="grid-2">
                     <div class="card">
                         <div class="card-title">T1059.006 - Python</div>
@@ -473,28 +466,28 @@
             </section>
 
             <section class="section">
-                <h2><span class="icon">👥</span> Real-World Usage</h2>
+                <h2>Real-World Usage</h2>
                 <div class="card">
                     <ul>
-                        <li><strong>APT29 (Cozy Bear)</strong> — SeaDuke malware uses Python for shellcode execution</li>
-                        <li><strong>Donut Framework</strong> — Generates Python shellcode loaders for .NET assemblies</li>
-                        <li><strong>Cobalt Strike</strong> — Python payload generation for initial access</li>
-                        <li><strong>SILENTTRINITY</strong> — Python-based C2 framework with shellcode capabilities</li>
+                        <li><strong>APT29 (Cozy Bear)</strong> - SeaDuke malware uses Python for shellcode execution</li>
+                        <li><strong>Donut Framework</strong> - Generates Python shellcode loaders for .NET assemblies</li>
+                        <li><strong>Cobalt Strike</strong> - Python payload generation for initial access</li>
+                        <li><strong>SILENTTRINITY</strong> - Python-based C2 framework with shellcode capabilities</li>
                     </ul>
                 </div>
             </section>
 
             <section class="section">
-                <h2><span class="icon">📚</span> References</h2>
+                <h2>References</h2>
                 <div class="references">
                     <a href="https://attack.mitre.org/techniques/T1055/001/" target="_blank" class="ref-link">
-                        📖 MITRE ATT&CK - Process Injection: DLL Injection
+                        MITRE ATT&CK - Process Injection: DLL Injection
                     </a>
                     <a href="https://github.com/TheWover/donut" target="_blank" class="ref-link">
-                        🔧 Donut - Shellcode Generation Framework
+                        Donut - Shellcode Generation Framework
                     </a>
                     <a href="https://www.symantec.com/connect/blogs/forkmeiamfamous-seaduke-latest-weapon-duke-armory" target="_blank" class="ref-link">
-                        📄 Symantec - SeaDuke Analysis
+                        Symantec - SeaDuke Analysis
                     </a>
                 </div>
             </section>

@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""
-T005: Python Discovery & Collection
-MITRE ATT&CK: T1059.006 + T1082 + T1113
-
-Tests EDR detection of Python-based system discovery and data collection
-including system enumeration, screenshots, keylogging, and file discovery.
-
-For authorized security testing only.
-"""
+# T005: Python Discovery & Collection - MITRE T1059.006 + T1082 + T1113
 
 import sys
 import os
@@ -21,7 +13,6 @@ IS_LINUX = platform.system() == "Linux"
 IS_MACOS = platform.system() == "Darwin"
 
 def run():
-    """Execute the discovery & collection test and return results."""
     result = {
         "status": "pending",
         "details": "",
@@ -50,7 +41,17 @@ def run():
         
         # Test 2: Network Information
         try:
-            local_ip = socket.gethostbyname(socket.gethostname())
+            # gethostbyname can fail on Linux hosts where the short hostname
+            # doesn't resolve; fall back to a UDP trick that needs no packets.
+            try:
+                local_ip = socket.gethostbyname(socket.gethostname())
+            except (socket.gaierror, OSError):
+                with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as _s:
+                    try:
+                        _s.connect(("8.8.8.8", 80))
+                        local_ip = _s.getsockname()[0]
+                    except OSError:
+                        local_ip = "127.0.0.1"
             findings.append(f"[NETWORK] Local IP: {local_ip}")
             
             # Get network interfaces (platform-specific)

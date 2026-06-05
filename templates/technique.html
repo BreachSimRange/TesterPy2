@@ -43,7 +43,7 @@
             width: var(--rail-width);
             height: 100vh;
             background: var(--bg-card);
-            border-right: 1px solid var(--border);
+           
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -145,7 +145,9 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-title { font-size: 18px; font-weight: 600; }
+        .logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .logo-text h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; color: var(--white); }
+        .logo-text span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white-50); letter-spacing: 0.5px; }
         .nav-links { display: flex; gap: 8px; }
         .nav-link {
             padding: 8px 12px;
@@ -227,17 +229,9 @@
             font-weight: 600;
             margin-bottom: 16px;
             padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        h2::before {
-            content: '';
-            width: 4px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 2px;
         }
         p { color: var(--white-70); margin-bottom: 16px; font-size: 15px; }
         code {
@@ -252,7 +246,7 @@
         /* Cards */
         .card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 16px;
@@ -266,15 +260,8 @@
             position: relative;
             color: var(--white-70);
             font-size: 14px;
-            border-bottom: 1px solid var(--border);
-        }
+            }
         li:last-child { border-bottom: none; }
-        li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: var(--error);
-        }
         li strong { color: var(--white); }
         
         /* APT Grid */
@@ -295,7 +282,7 @@
             font-family: 'IBM Plex Mono', monospace;
             color: var(--white-70);
         }
-        .apt-tag .flag { font-size: 18px; }
+        .apt-tag .flag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; background: var(--white-10); padding: 2px 5px; border-radius: 3px; color: var(--white-50); letter-spacing: 0.5px; }
         
         /* Test Scenario Cards */
         .test-card {
@@ -421,7 +408,6 @@
         
         /* Footer */
         .footer {
-            border-top: 1px solid var(--border);
             padding: 24px 32px;
             text-align: center;
             margin-top: 48px;
@@ -451,14 +437,14 @@
             <div class="rail-section">
                 <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
                 <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
-                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></a>
                 <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
-                <a href="/technique" class="rail-item active" data-tooltip="T1059.006"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+                <a href="/technique" class="rail-item active" data-tooltip="T1059.006"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></a>
                 <a href="/about" class="rail-item" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
             </div>
         </div>
         <div class="rail-footer">
-            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></a>
         </div>
     </nav>
 
@@ -466,7 +452,7 @@
     <div class="main-wrapper">
         <header class="header">
             <div class="header-inner">
-                <div class="header-title">T1059.006: Python Execution</div>
+                <a href="/" class="logo"><div class="logo-text"><h1>TESTERPy2</h1></div></a>
                 <nav class="nav-links">
                     <a href="/technique/shellcode_loader" class="nav-link">T001</a>
                     <a href="/technique/defense_evasion" class="nav-link">T002</a>
@@ -516,14 +502,14 @@
                     <section class="section">
                         <h2>Known Threat Actors Using Python</h2>
                         <div class="apt-grid">
-                            <div class="apt-tag"><span class="flag">🇷🇺</span> APT29 (SeaDuke)</div>
-                            <div class="apt-tag"><span class="flag">🇰🇵</span> Lazarus (InvisibleFerret)</div>
-                            <div class="apt-tag"><span class="flag">🇮🇷</span> APT39 (Chafer)</div>
-                            <div class="apt-tag"><span class="flag">🇮🇷</span> MuddyWater</div>
-                            <div class="apt-tag"><span class="flag">🇨🇳</span> APT31 (ZIRCONIUM)</div>
-                            <div class="apt-tag"><span class="flag">🇷🇺</span> Turla</div>
-                            <div class="apt-tag"><span class="flag">🇻🇪</span> Machete</div>
-                            <div class="apt-tag"><span class="flag">🇨🇳</span> Earth Lusca</div>
+                            <div class="apt-tag"><span class="flag">RU</span> APT29 (SeaDuke)</div>
+                            <div class="apt-tag"><span class="flag">KP</span> Lazarus (InvisibleFerret)</div>
+                            <div class="apt-tag"><span class="flag">IR</span> APT39 (Chafer)</div>
+                            <div class="apt-tag"><span class="flag">IR</span> MuddyWater</div>
+                            <div class="apt-tag"><span class="flag">CN</span> APT31 (ZIRCONIUM)</div>
+                            <div class="apt-tag"><span class="flag">RU</span> Turla</div>
+                            <div class="apt-tag"><span class="flag">VE</span> Machete</div>
+                            <div class="apt-tag"><span class="flag">CN</span> Earth Lusca</div>
                         </div>
                     </section>
 
@@ -669,10 +655,10 @@
                     <div class="sidebar-card">
                         <h3>External Resources</h3>
                         <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="external-link">
-                            📖 MITRE ATT&CK Page
+                            MITRE ATT&CK Page
                         </a>
                         <a href="https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.006/T1059.006.md" target="_blank" class="external-link">
-                            🔬 Atomic Red Team Tests
+                            Atomic Red Team Tests
                         </a>
                     </div>
                 </aside>

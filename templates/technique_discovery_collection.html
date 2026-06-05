@@ -14,7 +14,7 @@
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg-dark); color: var(--white); min-height: 100vh; line-height: 1.6; }
         
         /* Navigation Rail */
-        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
+        .rail { position: fixed; left: 0; top: 0; width: var(--rail-width); height: 100vh; background: var(--bg-card); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 100; }
         .rail-logo { width: 44px; height: 44px; background: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px; color: var(--bg-dark); margin-bottom: 24px; text-decoration: none; }
         .rail-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .rail-section { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
@@ -30,6 +30,9 @@
         
         .header { background: var(--bg-dark); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 72px; display: flex; align-items: center; }
         .header-inner { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .logo-text h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; color: var(--white); }
+        .logo-text span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white-50); letter-spacing: 0.5px; }
         .back-link { color: var(--white-70); text-decoration: none; font-size: 14px; }
         .back-link:hover { color: var(--white); }
         .nav-links { display: flex; gap: 8px; }
@@ -46,14 +49,13 @@
         h1 { font-size: 32px; font-weight: 700; margin-bottom: 16px; }
         .subtitle { font-size: 16px; color: var(--white-70); margin-bottom: 32px; }
         .section { margin-bottom: 40px; }
-        h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; }
         p { color: var(--white-70); margin-bottom: 16px; font-size: 15px; }
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+        .card { background: var(--bg-card);  border-radius: 12px; padding: 24px; margin-bottom: 16px; }
         .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: var(--purple); margin-bottom: 12px; }
         ul { list-style: none; }
-        li { padding: 12px 0; padding-left: 24px; position: relative; color: var(--white-70); font-size: 14px; border-bottom: 1px solid var(--border); }
+        li { padding: 12px 0; padding-left: 24px; position: relative; color: var(--white-70); font-size: 14px; }
         li:last-child { border-bottom: none; }
-        li::before { content: '→'; position: absolute; left: 0; color: var(--white-30); }
         li strong { color: var(--white); }
         .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e6edf3; overflow-x: auto; margin: 16px 0; line-height: 1.5; white-space: pre; tab-size: 4; }
         .code-block code { font-family: inherit; color: inherit; }
@@ -66,17 +68,17 @@
         .hljs-built_in { color: #ffa657; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .capability-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .capability-card { background: var(--bg-card);  border-radius: 12px; padding: 20px; }
         .capability-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         .capability-card h3 .num { width: 24px; height: 24px; background: var(--white); color: var(--bg-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
         .capability-card p { font-size: 13px; margin-bottom: 8px; }
         .capability-card code { display: block; background: var(--bg-dark); padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--info); }
-        .detect-item { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .detect-item { background: var(--bg-elevated);  border-radius: 8px; padding: 16px; }
         .detect-item h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--warning); }
         .detect-item p { font-size: 13px; margin: 0; }
-        .ref-link { display: block; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; color: var(--white-70); text-decoration: none; font-size: 13px; margin-bottom: 8px; }
+        .ref-link { display: block; padding: 12px 16px; background: var(--bg-elevated);  border-radius: 8px; color: var(--white-70); text-decoration: none; font-size: 13px; margin-bottom: 8px; }
         .ref-link:hover { background: var(--bg-card); color: var(--white); }
-        .footer { border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; margin-top: 48px; }
+        .footer { padding: 24px 32px; text-align: center; margin-top: 48px; }
         .footer p { font-size: 13px; color: var(--white-50); font-family: 'IBM Plex Mono', monospace; }
         @media (max-width: 768px) { .rail { display: none; } .main-wrapper { margin-left: 0; } .grid-2, .grid-3 { grid-template-columns: 1fr; } .nav-links { display: none; } }
     </style>
@@ -89,13 +91,13 @@
             <div class="rail-section">
                 <a href="/" class="rail-item" data-tooltip="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
                 <a href="/agents" class="rail-item" data-tooltip="Agents"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></a>
-                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+                <a href="/tests" class="rail-item" data-tooltip="Run Tests"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></a>
                 <a href="/results" class="rail-item" data-tooltip="Results"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></a>
                 <a href="/about" class="rail-item" data-tooltip="About"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></a>
             </div>
         </div>
         <div class="rail-footer">
-            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></a>
+            <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></a>
         </div>
     </nav>
 
@@ -103,7 +105,7 @@
     <div class="main-wrapper">
         <header class="header">
             <div class="header-inner">
-                <div class="header-title">T005: Discovery & Collection</div>
+                <a href="/" class="logo"><div class="logo-text"><h1>TESTERPy2</h1></div></a>
                 <nav class="nav-links">
                     <a href="/technique/shellcode_loader" class="nav-link">T001</a>
                     <a href="/technique/defense_evasion" class="nav-link">T002</a>
@@ -122,16 +124,16 @@
             <span class="badge badge-risk">Medium Risk</span>
         </div>
         <h1>Python Discovery & Collection</h1>
-        <p class="subtitle">Tests EDR/AV detection of Python-based reconnaissance and surveillance including system enumeration, screenshot capture, keylogger initialization, and file discovery — techniques used by RATs like PoetRAT, Machete, and InvisibleFerret.</p>
+        <p class="subtitle">Tests EDR/AV detection of Python-based reconnaissance and surveillance including system enumeration, screenshot capture, keylogger initialization, and file discovery. Techniques used by RATs like PoetRAT, Machete, and InvisibleFerret.</p>
 
         <section class="section">
-            <h2>📋 Overview</h2>
+            <h2>Overview</h2>
             <p>Discovery and collection techniques are used by adversaries to gather information about the target environment and collect sensitive data. This test evaluates whether your EDR can detect Python-based reconnaissance tools that enumerate system information, capture screenshots, monitor keyboard input, and traverse the file system.</p>
             <p>These activities often occur early in an intrusion to help attackers understand what they've compromised and identify valuable data targets.</p>
         </section>
 
         <section class="section">
-            <h2>🎯 Capabilities Tested</h2>
+            <h2>Capabilities Tested</h2>
             <div class="grid-3">
                 <div class="capability-card">
                     <h3><span class="num">1</span> System Enumeration</h3>
@@ -167,7 +169,7 @@
         </section>
 
         <section class="section">
-            <h2>💻 Technical Implementation</h2>
+            <h2>Technical Implementation</h2>
             <div class="card">
                 <div class="card-title">t005_discovery_collection.py</div>
                     <pre class="code-block"><code class="language-python">{{ test_code }}</code></pre>
@@ -175,7 +177,7 @@
             </section>
 
             <section class="section">
-                <h2>🔍 Detection Opportunities</h2>
+                <h2>Detection Opportunities</h2>
             <div class="grid-2">
                 <div class="detect-item"><h4>Bulk Enumeration</h4><p>Rapid sequential calls to system info APIs from a single process</p></div>
                 <div class="detect-item"><h4>Screenshot APIs</h4><p>GetDC(0) or BitBlt calls from non-UI applications like Python</p></div>
@@ -187,7 +189,7 @@
         </section>
 
         <section class="section">
-            <h2>🛡️ MITRE ATT&CK Mapping</h2>
+            <h2>MITRE ATT&CK Mapping</h2>
             <div class="grid-2">
                 <div class="card"><div class="card-title">T1082 - System Information Discovery</div><p>Gather details about OS, version, patches, architecture, and hardware.</p></div>
                 <div class="card"><div class="card-title">T1083 - File and Directory Discovery</div><p>Enumerate files and directories to find sensitive information.</p></div>
@@ -197,22 +199,22 @@
         </section>
 
         <section class="section">
-            <h2>👥 Real-World Usage</h2>
+            <h2>Real-World Usage</h2>
             <div class="card">
                 <ul>
-                    <li><strong>PoetRAT</strong> — Python RAT with screenshot, keylogger, and file exfiltration capabilities</li>
-                    <li><strong>Machete</strong> — Venezuela-linked APT using Python for surveillance operations</li>
-                    <li><strong>InvisibleFerret</strong> — Lazarus Group Python malware for reconnaissance</li>
-                    <li><strong>SILENTTRINITY</strong> — Python C2 framework with discovery modules</li>
+                    <li><strong>PoetRAT</strong> - Python RAT with screenshot, keylogger, and file exfiltration capabilities</li>
+                    <li><strong>Machete</strong> - Venezuela-linked APT using Python for surveillance operations</li>
+                    <li><strong>InvisibleFerret</strong> - Lazarus Group Python malware for reconnaissance</li>
+                    <li><strong>SILENTTRINITY</strong> - Python C2 framework with discovery modules</li>
                 </ul>
             </div>
         </section>
 
         <section class="section">
-            <h2>📚 References</h2>
-            <a href="https://attack.mitre.org/techniques/T1082/" target="_blank" class="ref-link">📖 MITRE ATT&CK - System Information Discovery</a>
-            <a href="https://attack.mitre.org/techniques/T1113/" target="_blank" class="ref-link">📖 MITRE ATT&CK - Screen Capture</a>
-            <a href="https://blog.talosintelligence.com/2020/04/poetrat-covid-19-lures.html" target="_blank" class="ref-link">📄 Cisco Talos - PoetRAT Analysis</a>
+            <h2>References</h2>
+            <a href="https://attack.mitre.org/techniques/T1082/" target="_blank" class="ref-link">MITRE ATT&CK - System Information Discovery</a>
+            <a href="https://attack.mitre.org/techniques/T1113/" target="_blank" class="ref-link">MITRE ATT&CK - Screen Capture</a>
+            <a href="https://blog.talosintelligence.com/2020/04/poetrat-covid-19-lures.html" target="_blank" class="ref-link">Cisco Talos - PoetRAT Analysis</a>
         </section>
         </main>
 

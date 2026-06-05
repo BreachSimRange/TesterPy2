@@ -49,7 +49,7 @@
             width: var(--rail-width);
             height: 100vh;
             background: var(--bg-card);
-            border-right: 1px solid var(--border);
+           
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -176,10 +176,9 @@
             align-items: center;
         }
 
-        .header-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
+        .logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+        .logo-text h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; color: var(--white); }
+        .logo-text span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white-50); letter-spacing: 0.5px; }
 
         .header-actions {
             display: flex;
@@ -200,7 +199,6 @@
         /* Agent Selector */
         .agent-selector {
             background: var(--bg-card);
-            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 24px;
@@ -221,14 +219,6 @@
             gap: 10px;
         }
 
-        .agent-selector-title::before {
-            content: '';
-            width: 4px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 2px;
-        }
-
         .agent-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -237,7 +227,6 @@
 
         .agent-card {
             background: var(--bg-elevated);
-            border: 2px solid var(--border);
             border-radius: 10px;
             padding: 16px;
             cursor: pointer;
@@ -245,13 +234,12 @@
         }
 
         .agent-card:hover {
-            border-color: var(--border-light);
             background: var(--bg-hover);
         }
 
         .agent-card.selected {
-            border-color: var(--success);
             background: rgba(74, 222, 128, 0.1);
+            outline: 1px solid rgba(74, 222, 128, 0.4);
         }
 
         .agent-card.offline {
@@ -300,9 +288,9 @@
         }
 
         .no-agents-icon {
-            font-size: 48px;
             margin-bottom: 16px;
-            opacity: 0.5;
+            opacity: 0.4;
+            color: var(--white-50);
         }
 
         /* Test Cards */
@@ -323,14 +311,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 2px;
         }
 
         .btn {
@@ -383,14 +363,9 @@
 
         .test-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
             transition: all 0.2s ease;
-        }
-
-        .test-card:hover {
-            border-color: var(--border-light);
         }
 
         .test-card-header {
@@ -450,7 +425,6 @@
             font-size: 10px;
             padding: 4px 8px;
             background: var(--bg-elevated);
-            border: 1px solid var(--border);
             border-radius: 4px;
             color: var(--white-50);
         }
@@ -460,7 +434,6 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 16px;
-            border-top: 1px solid var(--border);
         }
 
         .test-link {
@@ -499,7 +472,6 @@
         /* Results Log */
         .results-section {
             background: var(--bg-card);
-            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 24px;
         }
@@ -519,17 +491,8 @@
             gap: 10px;
         }
 
-        .results-title::before {
-            content: '';
-            width: 4px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 2px;
-        }
-
         .results-log {
             background: var(--bg-dark);
-            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 16px;
             max-height: 400px;
@@ -540,7 +503,6 @@
 
         .log-entry {
             padding: 8px 0;
-            border-bottom: 1px solid var(--border);
             display: flex;
             gap: 12px;
         }
@@ -571,7 +533,6 @@
 
         /* Footer */
         .footer {
-            border-top: 1px solid var(--border);
             padding: 24px 32px;
             text-align: center;
             margin-top: 48px;
@@ -604,13 +565,13 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 </a>
                 <a href="/tests" class="rail-item active" data-tooltip="Run Tests">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
                 </a>
                 <a href="/results" class="rail-item" data-tooltip="Results">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 </a>
                 <a href="/technique" class="rail-item" data-tooltip="T1059.006">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </a>
                 <a href="/about" class="rail-item" data-tooltip="About">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -619,7 +580,7 @@
         </div>
         <div class="rail-footer">
             <a href="https://attack.mitre.org/techniques/T1059/006/" target="_blank" class="rail-mitre" data-tooltip="MITRE ATT&CK">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </a>
         </div>
     </nav>
@@ -628,10 +589,10 @@
     <div class="main-wrapper">
         <header class="header">
             <div class="header-inner">
-                <h1 class="header-title">Run Tests</h1>
+                <a href="/" class="logo"><div class="logo-text"><h1>TESTERPy2</h1><span>SECURITY TESTING PLATFORM</span></div></a>
                 <div class="header-actions">
                     <button class="btn btn-primary" id="runAllBtn" disabled onclick="runAllTests()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
                         Run All Tests
                     </button>
                 </div>
@@ -653,7 +614,7 @@
                 </div>
                 <div class="agent-grid" id="agentGrid">
                     <div class="no-agents">
-                        <div class="no-agents-icon">🖥️</div>
+                        <div class="no-agents-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
                         <p>Loading agents...</p>
                     </div>
                 </div>
@@ -769,7 +730,7 @@
             if (agents.length === 0) {
                 grid.innerHTML = `
                     <div class="no-agents">
-                        <div class="no-agents-icon">🖥️</div>
+                        <div class="no-agents-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
                         <p>No agents connected</p>
                         <p style="font-size: 12px; margin-top: 8px;">Deploy agent.py on target systems to begin testing</p>
                     </div>
@@ -823,7 +784,7 @@
                             ${test.techniques.map(t => `<span class="technique-tag">${t}</span>`).join('')}
                         </div>
                         <div class="test-card-footer">
-                            <a href="${test.link}" class="test-link">View Details →</a>
+                            <a href="${test.link}" class="test-link">View Details</a>
                             <button class="btn-execute" disabled onclick="runTest('${test.id}')">Execute</button>
                         </div>
                     </div>

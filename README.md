@@ -1,28 +1,30 @@
-# TESTERPy2 - T1059.006 EDR/AV Testing Platform
+```
+ ████████╗███████╗███████╗████████╗███████╗██████╗ ██████╗ ██╗   ██╗██████╗
+ ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗██╔══██╗╚██╗ ██╔╝╚════██╗
+    ██║   █████╗  ███████╗   ██║   █████╗  ██████╔╝██████╔╝ ╚████╔╝  █████╔╝
+    ██║   ██╔══╝  ╚════██║   ██║   ██╔══╝  ██╔══██╗██╔═══╝   ╚██╔╝  ██╔═══╝
+    ██║   ███████╗███████║   ██║   ███████╗██║  ██║██║        ██║   ███████╗
+    ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝        ╚═╝   ╚══════╝
+```
 
-<p align="center">
-  <img src="https://img.shields.io/badge/MITRE%20ATT%26CK-T1059.006-red?style=for-the-badge" alt="MITRE ATT&CK">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-green?style=for-the-badge" alt="Platform">
-</p>
+**T1059.006 EDR/AV Testing Platform**
+
+
 
 ## Overview
 
-**TESTERPy2** is an open-source security testing platform designed to evaluate EDR/AV detection capabilities against Python-based offensive techniques. The platform focuses exclusively on **MITRE ATT&CK T1059.006** (Command and Scripting Interpreter: Python), testing whether security solutions can detect malicious activities executed through Python.
+TESTERPy2 is a security testing platform for evaluating EDR and AV detection capabilities against Python-based offensive techniques. It maps exclusively to MITRE ATT&CK T1059.006 (Command and Scripting Interpreter: Python), covering five independent test scenarios that exercise real credential dumping, defense evasion, browser theft, discovery, and shellcode execution primitives.
 
-### Why T1059.006?
+The platform runs as a Flask dashboard with a lightweight Python agent deployed on the target system. The agent receives test code over HTTP, executes each test in an isolated subprocess, and reports pass/detect/fail results back to the dashboard in real time.
 
-Python is increasingly used by sophisticated threat actors because:
-- **Cross-platform**: Same code runs on Windows, Linux, and macOS
-- **Rich standard library**: Built-in modules for system interaction (ctypes, subprocess, socket)
-- **Legitimate presence**: Python is often pre-installed or used for legitimate development
-- **Easy obfuscation**: Code can be compiled, packed, or obfuscated
-- **Living-off-the-land**: No need to drop additional binaries
+## Why T1059.006
 
-### Known APT Groups Using Python
+Python is consistently used by sophisticated threat actors because it runs cross-platform without dropping additional binaries, ships with a rich standard library covering ctypes, subprocess, and socket, and is frequently present on systems for legitimate purposes. The same properties that make Python useful for developers make it effective for living-off-the-land attacks.
 
-| Group | Country | Malware |
-|-------|---------|---------|
+**Groups known to use Python-based tooling**
+
+| Group | Country | Tool |
+|-------|---------|------|
 | APT29 | Russia | SeaDuke |
 | Lazarus | North Korea | InvisibleFerret |
 | APT39 | Iran | Chafer tools |
@@ -33,215 +35,217 @@ Python is increasingly used by sophisticated threat actors because:
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     TESTERPy2 Dashboard                       │
-│                    (Flask Web Application)                       │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
-│  │   Agents    │  │    Tests    │  │        Results          │ │
-│  │   Panel     │  │    Panel    │  │         Panel           │ │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘ │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │ HTTP API
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-        ▼                   ▼                   ▼
-┌───────────────┐   ┌───────────────┐   ┌───────────────┐
-│    Agent      │   │    Agent      │   │    Agent      │
-│   (Windows)   │   │   (Linux)     │   │   (macOS)     │
-│               │   │               │   │               │
-│ ┌───────────┐ │   │ ┌───────────┐ │   │ ┌───────────┐ │
-│ │ 5 Tests   │ │   │ │ 5 Tests   │ │   │ │ 5 Tests   │ │
-│ └───────────┘ │   │ └───────────┘ │   │ └───────────┘ │
-└───────────────┘   └───────────────┘   └───────────────┘
+TESTERPy2 Dashboard  (Flask, port 5000)
+        |
+        |  HTTP API
+        |
+   +---------+---------+
+   |         |         |
+ Agent     Agent     Agent
+(Windows) (Linux)   (macOS)
+   |         |         |
+ 5 Tests   5 Tests   5 Tests
 ```
+
+Each agent beacons the server on a configurable interval, receives base64-encoded test code, runs it in a child Python process, and submits the JSON result.
 
 ## Test Scenarios
 
-### T001: Python Shellcode Loader
-**Techniques:** T1059.006, T1055.001, T1106
+### T001 - Python Shellcode Loader
 
-Tests EDR detection of Python-based shellcode injection using ctypes for:
-- Memory allocation via `VirtualAlloc` with `PAGE_EXECUTE_READWRITE`
-- Shellcode copying to allocated memory
-- Thread creation pointing to shellcode
+MITRE: T1059.006, T1055.001, T1106  
+Platform: Windows only
 
-**Detection Points:**
-- Python process calling VirtualAlloc with RWX permissions
-- CreateThread from Python with suspicious start address
-- Memory regions with execute permissions
+Allocates a RWX memory region via VirtualAlloc, copies a benign NOP-sled payload into it, and creates an execution thread via CreateThread. Tests whether the EDR detects the VirtualAlloc + CreateThread chain from a Python interpreter process.
 
-### T002: Python Defense Evasion
-**Techniques:** T1059.006, T1562.001, T1027
+Detection points:
+- Python process calling VirtualAlloc with PAGE_EXECUTE_READWRITE
+- CreateThread targeting a non-image memory region
+- RWX allocation followed immediately by a thread start
 
-Tests EDR detection of security product tampering:
-- AMSI bypass via AmsiScanBuffer location
-- ETW provider enumeration
-- Ntdll reading from disk (unhooking preparation)
-- Environment variable manipulation
+### T002 - Python Defense Evasion
 
-**Detection Points:**
-- Access to amsi.dll exports
-- ETW provider tampering indicators
-- Reading system DLLs from disk
+MITRE: T1059.006, T1562.001, T1027  
+Platform: Windows only
 
-### T003: Python Credential Dumper
-**Techniques:** T1059.006, T1003.001, T1003.002, T1552.001
+Locates AmsiScanBuffer via GetProcAddress, enumerates the EtwEventWrite address, reads ntdll.dll from disk (unhooking preparation), and sets COMPLUS_ETWEnabled environment variables. Tests whether the EDR detects AMSI or ETW tampering indicators from a Python process.
 
-Tests EDR detection of credential access:
-- SAM registry hive access attempt
-- LSASS process enumeration and memory access
-- DPAPI master key directory access
-- Linux /etc/shadow access
-- SSH private key enumeration
+Detection points:
+- GetProcAddress calls targeting amsi.dll exports
+- ntdll.dll read from disk by a Python process
+- ETW-disabling environment variables
 
-**Detection Points:**
-- Registry access to SAM/SECURITY hives
-- OpenProcess on LSASS
-- DPAPI directory enumeration
-- Shadow file read attempts
+### T003 - Python Credential Dumper
 
-### T004: Python Browser Stealer
-**Techniques:** T1059.006, T1555.003, T1539
+MITRE: T1059.006, T1003.001, T1003.002, T1552.001  
+Platform: Windows and Linux
 
-Tests EDR detection of browser data theft:
-- Chrome Login Data SQLite extraction
-- Chrome Cookies database copying
-- Firefox logins.json parsing
-- Edge credential file access
+Exercises three independent Windows dumping primitives and two Linux credential paths:
 
-**Detection Points:**
+1. SAM/SECURITY/SYSTEM hive dump via reg.exe save
+2. SAM/SECURITY hive dump via advapi32 RegSaveKeyExW (with SeBackupPrivilege)
+3. Full LSASS memory dump via dbghelp MiniDumpWriteDump (with SeDebugPrivilege)
+4. Volume Shadow Copy enumeration for offline SAM extraction
+5. DPAPI master key directory access
+6. Linux /etc/shadow and SSH private key enumeration
+
+All artefacts are written to %TEMP% and deleted immediately. No credentials are retained.
+
+Detection points:
+- reg.exe save targeting HKLM\SAM, SECURITY, SYSTEM
+- RegOpenKeyExW + RegSaveKeyExW from a Python process
+- OpenProcess(PROCESS_VM_READ) on lsass.exe
+- MiniDumpWriteDump targeting lsass.exe
+- vssadmin list shadows from a non-admin context
+- /etc/shadow read from Python
+
+### T004 - Python Browser Stealer
+
+MITRE: T1059.006, T1555.003, T1539, T1552.001  
+Platform: Windows and Linux
+
+Copies Chrome Login Data, Firefox logins.json, Firefox cookies.sqlite, and Edge Login Data to temporary files for inspection. Counts stored credentials and cookie entries without decrypting any values.
+
+Detection points:
 - Access to browser profile directories
-- SQLite operations on credential databases
-- Copying browser data files
+- SQLite operations on Login Data or cookies databases
+- File copy of browser credential stores
 
-### T005: Python Discovery & Collection
-**Techniques:** T1059.006, T1082, T1083, T1056.001, T1113
+### T005 - Python Discovery and Collection
 
-Tests EDR detection of reconnaissance and surveillance:
-- System information enumeration
-- Network configuration discovery
-- Process listing
-- Screenshot capability check
-- Keyboard state access (keylogger prep)
-- File system traversal
+MITRE: T1059.006, T1082, T1083, T1056.001, T1113  
+Platform: Windows and Linux
 
-**Detection Points:**
-- Bulk system enumeration patterns
-- GetDC/screenshot API calls
-- Keyboard hook indicators
-- Rapid file system access
+Enumerates hostname, OS version, architecture, network interfaces, running processes, home directory contents, and environment variables. On Windows, reads screen resolution via GetSystemMetrics and keyboard state via GetKeyboardState.
+
+Detection points:
+- Bulk system enumeration from a Python process
+- GetSystemMetrics / GetKeyboardState API calls
+- Rapid traversal of home directory and Documents
+
+---
+
+## Screenshots
+
+<!-- Dashboard -->
+![Dashboard](docs/screenshots/dashboard.png)
+
+<!-- Run Tests -->
+![Run Tests](docs/screenshots/tests.png)
+
+<!-- Results View -->
+![Results](docs/screenshots/results.png)
+
+<!-- Connected Agents -->
+![Agents](docs/screenshots/agents.png)
+
+---
 
 ## Installation
 
-### Requirements
-- Python 3.8+
-- Flask
-- requests
-
-### Server Setup
+Requirements: Python 3.8+, Flask, requests
 
 ```bash
-# Clone or download the project
-cd testerpy2
-
-# Install dependencies
 pip install flask requests
+```
 
-# Start the dashboard
+### Start the Dashboard
+
+```bash
 python app.py
 ```
 
-The dashboard will be available at `http://localhost:5000`
+Dashboard available at http://localhost:5000
 
-### Agent Deployment
+Optional environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `API_KEY` | none | Shared token required in `X-API-Key` header on all write endpoints |
+| `SECRET_KEY` | random | Flask session secret. Set to a fixed value to persist sessions across restarts |
+| `FLASK_DEBUG` | false | Set to `true` to enable the Werkzeug debugger (dev only) |
+| `AGENT_PURGE_MINUTES` | 30 | Agents inactive longer than this are automatically removed |
+
+### Deploy an Agent
 
 ```bash
-# On target system (Windows/Linux/macOS)
-python agent.py --server http://<server-ip>:5000
+# Basic
+python agent.py --server http://<dashboard-ip>:5000
+
+# With API key authentication
+python agent.py --server http://<dashboard-ip>:5000 --api-key <token>
 
 # With custom beacon interval
-python agent.py --server http://192.168.1.100:5000 --interval 5
+python agent.py --server http://<dashboard-ip>:5000 --interval 5
 ```
+
+The agent auto-detects platform, registers with the server, and begins beaconing. If the server restarts and loses state, the agent re-registers automatically with exponential backoff.
 
 ## Usage
 
-### 1. Start the Dashboard
-```bash
-python app.py
-```
+1. Start `app.py` on the dashboard host
+2. Run `agent.py` on each target system pointing at the dashboard
+3. Select a connected agent from the Agents panel
+4. Click Execute on individual tests or Run All Tests
+5. Monitor live status in the Results panel
 
-### 2. Deploy Agent(s)
-```bash
-python agent.py -s http://<dashboard-ip>:5000
-```
-
-### 3. Execute Tests
-- Select an agent from the Connected Agents panel
-- Click "Execute" on individual tests or "Run All Tests"
-- Monitor results in the Results panel
-
-### 4. Interpret Results
+**Result statuses**
 
 | Status | Meaning |
 |--------|---------|
-| **Success** (Green) | Test completed without EDR intervention - technique bypassed |
-| **Detected** (Yellow) | EDR blocked or flagged the activity |
-| **Failed** (Red) | Test encountered an error (not detection-related) |
-| **Skipped** (Gray) | Test not applicable to this platform |
-| **Pending** (Blue) | Test queued, waiting for execution |
+| success | Test completed without EDR intervention |
+| detected | EDR blocked or flagged the activity |
+| failed | Test error unrelated to detection |
+| skipped | Test not applicable to this platform |
+| cancelled | Operator cancelled before completion |
+| running | Test currently executing on agent |
+| pending | Queued, waiting for agent to beacon |
 
-## API Endpoints
+## API Reference
 
-### Agent Communication
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/agent/register` | POST | Register new agent |
-| `/api/agent/beacon` | POST | Agent check-in, retrieve commands |
-| `/api/agent/result` | POST | Submit test results |
+### Agent endpoints (require `X-API-Key` if `API_KEY` is set)
 
-### Dashboard
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/agents` | GET | List all agents |
-| `/api/tests` | GET | Get test definitions |
-| `/api/results` | GET | Get all results |
-| `/api/execute` | POST | Queue single test |
-| `/api/execute_all` | POST | Queue all tests |
-| `/api/stats` | GET | Dashboard statistics |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/agent/register` | Register a new agent |
+| POST | `/api/agent/beacon` | Check in and retrieve pending commands |
+| POST | `/api/agent/result` | Submit a test result |
 
-## Security Considerations
+### Dashboard endpoints
 
-⚠️ **WARNING: This tool is for authorized security testing only.**
-
-1. **Legal Authorization**: Only use on systems you own or have explicit written permission to test
-2. **Isolated Environment**: Run tests in isolated lab environments when possible
-3. **Network Segmentation**: Keep the dashboard on a separate network segment
-4. **Logging**: All test executions are logged on the dashboard
-5. **Benign Payloads**: All tests use non-destructive, benign payloads
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/execute` | Queue a single test on an agent |
+| POST | `/api/execute_all` | Queue all five tests on an agent |
+| POST | `/api/cancel` | Cancel a pending or running test |
+| GET | `/api/agents` | List connected agents |
+| GET | `/api/tests` | Get test definitions |
+| GET | `/api/results` | Get all results |
+| GET | `/api/stats` | Summary counts by status |
 
 ## Detection Development
 
-Use TESTERPy2 results to develop detections for:
+Use TESTERPy2 results to identify gaps and develop detections.
 
-### Windows (KQL/Defender)
+### Windows - KQL (Microsoft Defender / Sentinel)
+
 ```kql
 DeviceProcessEvents
 | where FileName in~ ("python.exe", "python3.exe", "pythonw.exe")
-| where ProcessCommandLine has_any ("ctypes", "VirtualAlloc", "CreateThread")
-| where ProcessCommandLine has_any ("-c", "-m", "exec", "eval")
+| where ProcessCommandLine has_any ("ctypes", "VirtualAlloc", "CreateThread",
+    "MiniDumpWriteDump", "AmsiScanBuffer", "RegSaveKeyExW")
 ```
 
-### Linux (Sigma)
+### Linux - Sigma
+
 ```yaml
-title: Suspicious Python Execution
+title: Suspicious Python Credential Access
 logsource:
     product: linux
     service: auditd
 detection:
     selection:
-        exe|endswith: '/python'
+        exe|endswith: '/python3'
     keywords:
         - '/etc/shadow'
         - 'ctypes'
@@ -249,17 +253,22 @@ detection:
     condition: selection and keywords
 ```
 
+## Security
+
+This tool is for authorized security testing only. Only deploy against systems you own or have explicit written permission to test.
+
+- Run the dashboard and agents in an isolated lab network
+- Set `API_KEY` to prevent unauthorized test execution on exposed instances
+- All test artefacts written to disk are deleted immediately after measurement
+- No credentials, keys, or sensitive data are transmitted to the dashboard
+
 ## References
 
 - [MITRE ATT&CK T1059.006](https://attack.mitre.org/techniques/T1059/006/)
 - [Atomic Red Team - T1059.006](https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.006/T1059.006.md)
-- [APT29 SeaDuke Analysis](http://www.symantec.com/connect/blogs/forkmeiamfamous-seaduke-latest-weapon-duke-armory)
+- [APT29 SeaDuke Analysis](https://www.symantec.com/connect/blogs/forkmeiamfamous-seaduke-latest-weapon-duke-armory)
 - [InvisibleFerret Analysis](https://www.welivesecurity.com/en/eset-research/deceptivedevelopment-targets-freelance-developers/)
-
-## License
-
-For authorized security testing and research purposes only.
 
 ---
 
-**Built for EDR/AV evaluation and detection engineering. https://breachsimrange.io**
+Built for EDR/AV evaluation and detection engineering. https://breachsimrange.io

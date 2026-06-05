@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
-"""
-T004: Python Browser Stealer
-MITRE ATT&CK: T1059.006 + T1555.003
-
-Tests EDR detection of Python-based browser credential harvesting
-targeting Chrome, Firefox, and Edge password databases.
-
-For authorized security testing only.
-"""
+# T004: Python Browser Stealer - MITRE T1059.006 + T1555.003
 
 import sys
 import os
@@ -56,7 +48,6 @@ def get_edge_path():
     return None
 
 def run():
-    """Execute the browser stealer test and return results."""
     result = {
         "status": "pending",
         "details": "",
@@ -75,41 +66,47 @@ def run():
             login_data = os.path.join(chrome_path, "Login Data")
             
             if os.path.exists(login_data):
+                tmp_fd, tmp_db = tempfile.mkstemp(suffix=".db",
+                                                   prefix="testerpy2_chr_")
+                os.close(tmp_fd)
+                conn = None
                 try:
                     # Copy database to temp (Chrome locks the file)
-                    tmp_db = os.path.join(tempfile.gettempdir(), "chrome_test.db")
                     shutil.copy2(login_data, tmp_db)
-                    
                     conn = sqlite3.connect(tmp_db)
                     cursor = conn.cursor()
-                    
+
                     # Count stored credentials
                     cursor.execute("SELECT COUNT(*) FROM logins")
                     count = cursor.fetchone()[0]
-                    
+
                     # Get origin URLs (not passwords)
                     cursor.execute("SELECT origin_url FROM logins LIMIT 5")
                     urls = [row[0] for row in cursor.fetchall()]
-                    
                     conn.close()
-                    os.remove(tmp_db)
-                    
+                    conn = None
+
                     findings.append(f"[CHROME] Login Data accessible")
                     findings.append(f"[CHROME] Stored credentials: {count}")
                     if urls:
                         findings.append(f"[CHROME] Sample origins: {len(urls)} sites")
-                        
+
                 except sqlite3.OperationalError as e:
                     if "locked" in str(e).lower():
                         findings.append("[CHROME] Database locked (browser running)")
                     else:
                         findings.append(f"[CHROME] BLOCKED: {e}")
                         detected = True
-                except PermissionError as e:
+                except PermissionError:
                     findings.append(f"[CHROME] BLOCKED: Access denied")
                     detected = True
                 except Exception as e:
                     findings.append(f"[CHROME] Error: {e}")
+                finally:
+                    if conn:
+                        conn.close()
+                    if os.path.exists(tmp_db):
+                        os.remove(tmp_db)
             else:
                 findings.append("[CHROME] Login Data not found")
         else:
@@ -149,18 +146,26 @@ def run():
                     # Check cookies.sqlite
                     cookies_db = os.path.join(profile_path, "cookies.sqlite")
                     if os.path.exists(cookies_db):
+                        tmp_fd, tmp_db = tempfile.mkstemp(suffix=".db",
+                                                           prefix="testerpy2_ff_")
+                        os.close(tmp_fd)
+                        conn = None
                         try:
-                            tmp_db = os.path.join(tempfile.gettempdir(), "ff_cookies.db")
                             shutil.copy2(cookies_db, tmp_db)
                             conn = sqlite3.connect(tmp_db)
                             count = conn.cursor().execute(
                                 "SELECT COUNT(*) FROM moz_cookies"
                             ).fetchone()[0]
                             conn.close()
-                            os.remove(tmp_db)
+                            conn = None
                             findings.append(f"[FIREFOX] Cookies accessible: {count} cookies")
                         except Exception as e:
                             findings.append(f"[FIREFOX] Cookies error: {e}")
+                        finally:
+                            if conn:
+                                conn.close()
+                            if os.path.exists(tmp_db):
+                                os.remove(tmp_db)
                 else:
                     findings.append("[FIREFOX] No default profile found")
                     
@@ -179,20 +184,22 @@ def run():
                 login_data = os.path.join(edge_path, "Login Data")
                 
                 if os.path.exists(login_data):
+                    tmp_fd, tmp_db = tempfile.mkstemp(suffix=".db",
+                                                       prefix="testerpy2_edge_")
+                    os.close(tmp_fd)
+                    conn = None
                     try:
-                        tmp_db = os.path.join(tempfile.gettempdir(), "edge_test.db")
                         shutil.copy2(login_data, tmp_db)
-                        
                         conn = sqlite3.connect(tmp_db)
                         count = conn.cursor().execute(
                             "SELECT COUNT(*) FROM logins"
                         ).fetchone()[0]
                         conn.close()
-                        os.remove(tmp_db)
-                        
+                        conn = None
+
                         findings.append(f"[EDGE] Login Data accessible")
                         findings.append(f"[EDGE] Stored credentials: {count}")
-                        
+
                     except sqlite3.OperationalError as e:
                         if "locked" in str(e).lower():
                             findings.append("[EDGE] Database locked (browser running)")
@@ -203,6 +210,11 @@ def run():
                         detected = True
                     except Exception as e:
                         findings.append(f"[EDGE] Error: {e}")
+                    finally:
+                        if conn:
+                            conn.close()
+                        if os.path.exists(tmp_db):
+                            os.remove(tmp_db)
                 else:
                     findings.append("[EDGE] Login Data not found")
             else:
