@@ -34,17 +34,34 @@ Python is consistently used by sophisticated threat actors because it runs cross
 
 ## Architecture
 
-```
-TESTERPy2 Dashboard  (Flask, port 5000)
-        |
-        |  HTTP API
-        |
-   +---------+---------+
-   |         |         |
- Agent     Agent     Agent
-(Windows) (Linux)   (macOS)
-   |         |         |
- 5 Tests   5 Tests   5 Tests
+```mermaid
+graph LR
+
+    Dashboard["TESTERPy2 Dashboard<br/>(Flask, Port 5000)"]
+
+    Win["Windows Agent"]
+    Linux["Linux Agent"]
+    Mac["macOS Agent"]
+
+    WinTests["5 Tests"]
+    LinuxTests["5 Tests"]
+    MacTests["5 Tests"]
+
+    Dashboard -- "HTTP API" --> Win
+    Dashboard -- "HTTP API" --> Linux
+    Dashboard -- "HTTP API" --> Mac
+
+    Win  --> WinTests
+    Linux  --> LinuxTests
+    Mac  --> MacTests
+
+    classDef center fill:#2f69b1,color:white,stroke:#2f69b1;
+    classDef agent fill:#1c2733,color:white,stroke:#1c2733;
+    classDef tests fill:#555,color:white,stroke:#555;
+
+    class Dashboard center;
+    class Win,Linux,Mac agent;
+    class WinTests,LinuxTests,MacTests tests;
 ```
 
 Each agent beacons the server on a configurable interval, receives base64-encoded test code, runs it in a child Python process, and submits the JSON result.
