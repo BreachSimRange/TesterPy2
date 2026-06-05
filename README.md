@@ -147,16 +147,16 @@ Detection points:
 ## Screenshots
 
 <!-- Dashboard -->
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](images/dashboard.png)
 
 <!-- Run Tests -->
-![Run Tests](docs/screenshots/tests.png)
+![Run Tests](images/run-tests.png)
 
 <!-- Results View -->
-![Results](docs/screenshots/results.png)
+![Results](images/results.png)
 
 <!-- Connected Agents -->
-![Agents](docs/screenshots/agents.png)
+![Agents](images/agents.png)
 
 ---
 
