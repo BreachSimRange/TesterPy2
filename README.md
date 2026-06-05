@@ -57,7 +57,7 @@ graph TD
     Linux --> LTests
     Mac --> MTests
 
-    classDef dashboard fill:#2f69b1,color:white,stroke:#2f69b1;
+    classDef dashboard fill:#0d161f,color:white,stroke:#0d161f;
     classDef agent fill:#1c2733,color:white,stroke:#1c2733;
     classDef tests fill:#555,color:white,stroke:#555;
 
