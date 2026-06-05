@@ -35,33 +35,35 @@ Python is consistently used by sophisticated threat actors because it runs cross
 ## Architecture
 
 ```mermaid
-graph LR
+%%{init: {"flowchart": {"nodeSpacing": 30, "rankSpacing": 50}}}%%
 
-    Dashboard["TESTERPy2 Dashboard<br/>(Flask, Port 5000)"]
+graph TD
+
+    Dashboard["TESTERPy2 Dashboard<br/>(Flask :5000)"]
 
     Win["Windows Agent"]
     Linux["Linux Agent"]
     Mac["macOS Agent"]
 
-    WinTests["5 Tests"]
-    LinuxTests["5 Tests"]
-    MacTests["5 Tests"]
+    WTests["5 Tests"]
+    LTests["5 Tests"]
+    MTests["5 Tests"]
 
-    Dashboard -- "HTTP API" --> Win
-    Dashboard -- "HTTP API" --> Linux
-    Dashboard -- "HTTP API" --> Mac
+    Dashboard -->|HTTP API| Win
+    Dashboard -->|HTTP API| Linux
+    Dashboard -->|HTTP API| Mac
 
-    Win  --> WinTests
-    Linux  --> LinuxTests
-    Mac  --> MacTests
+    Win --> WTests
+    Linux --> LTests
+    Mac --> MTests
 
     classDef center fill:#2f69b1,color:white,stroke:#2f69b1;
-    classDef agent fill:#1c2733,color:white,stroke:#1c2733;
-    classDef tests fill:#555,color:white,stroke:#555;
+    classDef agent fill:#1c2733,color:white,stroke:#1c2733;
+    classDef tests fill:#555,color:white,stroke:#555;
 
-    class Dashboard center;
+    class Dashboard dashboard;
     class Win,Linux,Mac agent;
-    class WinTests,LinuxTests,MacTests tests;
+    class WTests,LTests,MTests tests;
 ```
 
 Each agent beacons the server on a configurable interval, receives base64-encoded test code, runs it in a child Python process, and submits the JSON result.
